@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wheel of MUT Franchise Spinners</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Barlow:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --turf:#0f3d24; --turf2:#135030; --dark:#0a1f14; --panel:#0d2a1a; --line:#2c6b47;
+    --chalk:#f4f6f1; --muted:#a9c4b3; --gold:#ffc83d; --pig:#8a4b22;
+    --pack:#1f7a46; --upg:#1d5fa8; --sign:#8a4b22; --bonus:#b8860b; --goal:#1d5fa8; --hand:#b3541e; --gamble:#a3263f;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;min-height:100%;color:var(--chalk);font-family:Barlow,system-ui,sans-serif;
+    background:repeating-linear-gradient(180deg,var(--turf) 0 90px,var(--turf2) 90px 180px)}
+  header{text-align:center;padding:14px 12px 10px;background:var(--dark);border-bottom:4px solid var(--chalk)}
+  h1{font-family:Oswald,sans-serif;font-weight:700;margin:0;font-size:clamp(22px,6.2vw,34px);letter-spacing:1.5px;text-transform:uppercase}
+  h1 span{color:var(--gold)}
+  .sub{color:var(--muted);font-size:14px;margin-top:2px}
+  nav{padding:8px 0 4px;background:rgba(10,31,20,.75)}
+  .navrow{display:flex;gap:6px;overflow-x:auto;padding:4px 12px;scrollbar-width:none;align-items:center}
+  .navrow::-webkit-scrollbar{display:none}
+  .navlabel{flex:0 0 auto;font-family:Oswald,sans-serif;font-size:12px;color:var(--gold);letter-spacing:1px;text-transform:uppercase;min-width:54px}
+  nav button{flex:0 0 auto;font-family:Oswald,sans-serif;font-size:14px;font-weight:500;color:var(--chalk);background:var(--panel);
+     border:2px solid var(--line);border-radius:6px;padding:7px 11px;cursor:pointer;white-space:nowrap;text-transform:uppercase;letter-spacing:.5px}
+  nav button.on{color:#1a1205;background:var(--gold);border-color:var(--chalk)}
+  main{max-width:560px;margin:0 auto;padding:10px 12px 40px}
+  .desc{text-align:center;font-size:15.5px;margin:4px 0 12px;line-height:1.35;background:var(--dark);border-radius:8px;padding:8px 10px;border:1px solid var(--line)}
+  .wheelwrap{position:relative;width:100%;max-width:430px;margin:0 auto;aspect-ratio:1}
+  #wheel{width:100%;height:100%;display:block;filter:drop-shadow(0 8px 20px rgba(0,0,0,.55))}
+  .pointer{position:absolute;top:-8px;left:50%;transform:translateX(-50%);width:0;height:0;
+     border-left:15px solid transparent;border-right:15px solid transparent;border-top:30px solid var(--gold);
+     filter:drop-shadow(0 3px 3px rgba(0,0,0,.7));z-index:2}
+  .hub{position:absolute;inset:0;margin:auto;width:19%;height:19%;border-radius:50%;background:var(--chalk);border:4px solid var(--dark);
+     display:flex;align-items:center;justify-content:center;font-size:clamp(22px,7vw,36px);cursor:pointer;user-select:none}
+  .spin{display:block;margin:14px auto 0;font-family:Oswald,sans-serif;font-weight:700;font-size:20px;letter-spacing:2px;
+     color:#1a1205;background:var(--gold);border:3px solid var(--chalk);border-radius:8px;padding:10px 46px;cursor:pointer;box-shadow:0 4px 0 #7a5a0c}
+  .spin:active{transform:translateY(2px);box-shadow:0 2px 0 #7a5a0c}
+  .spin:disabled{opacity:.5}
+  .packlink{display:block;text-align:center;margin-top:12px;color:var(--gold);font-family:Oswald,sans-serif;text-transform:uppercase;letter-spacing:1px;font-size:14px}
+  .rules a{color:var(--gold)}
+  .result{margin:16px 0 0;background:var(--dark);border:2px solid var(--chalk);border-radius:10px;padding:14px 16px;min-height:60px}
+  .result.empty{color:var(--muted);text-align:center;border-color:var(--line)}
+  .rtitle{font-family:Oswald,sans-serif;font-weight:700;font-size:22px;color:var(--gold);display:flex;align-items:center;gap:8px;text-transform:uppercase}
+  .tag{font-family:Oswald,sans-serif;font-size:11px;font-weight:500;padding:2px 8px;border-radius:4px;margin-left:auto;letter-spacing:.5px;color:#fff;text-transform:uppercase;white-space:nowrap}
+  .rbody{font-size:17px;line-height:1.4;margin-top:6px}
+  .rnote{font-size:15px;color:var(--gold);margin-top:6px;font-weight:600}
+  .pop{animation:pop .35s ease-out}
+  @keyframes pop{0%{transform:scale(.94);opacity:.3}100%{transform:scale(1);opacity:1}}
+  details{margin-top:12px;background:var(--dark);border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+  summary{font-family:Oswald,sans-serif;font-weight:500;color:var(--gold);cursor:pointer;font-size:15px;text-transform:uppercase;letter-spacing:.5px}
+  .odds{width:100%;border-collapse:collapse;margin-top:8px;font-size:15px}
+  .odds td{padding:6px 2px;border-top:1px solid var(--line);vertical-align:top}
+  .odds td.p{text-align:right;color:var(--gold);white-space:nowrap;font-variant-numeric:tabular-nums}
+  .odds .d{color:var(--muted);font-size:13.5px}
+  .odds .tag{margin-left:4px;display:inline-block}
+  .log{list-style:none;padding:0;margin:8px 0 0;font-size:15px}
+  .log li{padding:6px 0;border-top:1px solid var(--line);display:flex;gap:8px}
+  .log .w{color:var(--muted);font-size:12px;font-family:Oswald,sans-serif;min-width:104px;text-transform:uppercase}
+  .small{margin-top:8px;font-family:Oswald,sans-serif;font-size:12px;background:var(--panel);color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:6px 10px;cursor:pointer}
+  .rules{font-size:15.5px;line-height:1.45}
+  .rules h3{font-family:Oswald,sans-serif;color:var(--gold);font-size:15px;margin:12px 0 4px;text-transform:uppercase}
+  .rules p{margin:4px 0}
+  .rules ol{padding-left:20px;margin:4px 0}
+  .rules li{margin:5px 0}
+  .rules .note{color:var(--muted);font-size:14.5px}
+
+/* ---- packs ---- */
+
+  :root{--dark:#0a1f14;--turf:#0f3d24;--turf2:#135030;--line:#2c6b47;--chalk:#f4f6f1;--muted:#a9c4b3;--gold:#ffc83d;
+    --bronze1:#b0703c;--bronze2:#6e3f1c;--silver1:#d5dbe0;--silver2:#7d8891;--gold1:#ffd866;--gold2:#b8860b;
+    --elite1:#ff5a5a;--elite2:#5c0a14;--legend1:#7ef0ff;--legend2:#5b2bd6}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;min-height:100%;color:var(--chalk);font-family:Barlow,system-ui,sans-serif;
+    background:repeating-linear-gradient(180deg,var(--turf) 0 90px,var(--turf2) 90px 180px)}
+  header{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--dark);border-bottom:4px solid var(--chalk)}
+  h1{font-family:Oswald,sans-serif;font-weight:700;margin:0;font-size:clamp(20px,5.6vw,30px);letter-spacing:1.5px;text-transform:uppercase;flex:1}
+  h1 span{color:var(--gold)}
+  .ibtn{font-family:Oswald,sans-serif;font-size:13px;background:#0d2a1a;color:var(--chalk);border:2px solid var(--line);border-radius:6px;padding:6px 10px;cursor:pointer;text-transform:uppercase}
+  main{max-width:640px;margin:0 auto;padding:12px 12px 50px}
+  h2{font-family:Oswald,sans-serif;text-transform:uppercase;letter-spacing:1px;font-size:17px;color:var(--gold);margin:14px 0 8px}
+  .btn{font-family:Oswald,sans-serif;font-weight:700;font-size:17px;letter-spacing:1.5px;text-transform:uppercase;color:#1a1205;background:var(--gold);
+    border:3px solid var(--chalk);border-radius:8px;padding:9px 22px;cursor:pointer;box-shadow:0 4px 0 #7a5a0c}
+  .btn:active{transform:translateY(2px);box-shadow:0 2px 0 #7a5a0c}
+  .btn.ghost{background:#0d2a1a;color:var(--chalk);border-color:var(--line);box-shadow:none}
+
+  /* store */
+  .store{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  @media(min-width:560px){.store{grid-template-columns:repeat(3,1fr)}}
+  .tile{background:var(--dark);border:1px solid var(--line);border-radius:12px;padding:12px 10px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px}
+  .tile h3{font-family:Oswald,sans-serif;margin:0;font-size:18px;text-transform:uppercase;letter-spacing:1px}
+  .tile p{margin:0;font-size:13.5px;color:var(--muted);line-height:1.3;min-height:36px}
+  .tile select{width:100%;font:inherit;font-size:14px;background:#0d2a1a;color:var(--chalk);border:1px solid var(--line);border-radius:6px;padding:6px}
+  .tile .btn{font-size:14px;padding:7px 16px;width:100%}
+  .tile .btnrow{display:flex;gap:6px;width:100%}
+  .tile .btnrow .btn{padding:7px 4px}
+
+  /* pack art */
+  .pack{position:relative;width:92px;height:132px;border-radius:9px;overflow:hidden;border:2px solid rgba(255,255,255,.55);
+    box-shadow:0 6px 14px rgba(0,0,0,.5);display:flex;flex-direction:column;align-items:center;justify-content:center;flex:0 0 auto}
+  .pack::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(115deg,rgba(255,255,255,.14) 0 6px,transparent 6px 14px)}
+  .pack::after{content:"";position:absolute;top:-60%;left:-80%;width:60%;height:220%;transform:rotate(22deg);
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);animation:shine 2.8s linear infinite}
+  @keyframes shine{0%{left:-80%}60%,100%{left:140%}}
+  .pack .crimp{position:absolute;left:0;right:0;height:9px;background:repeating-linear-gradient(90deg,rgba(0,0,0,.35) 0 3px,rgba(255,255,255,.25) 3px 6px)}
+  .pack .crimp.t{top:0}.pack .crimp.b{bottom:0}
+  .pack .ball{font-size:30px;position:relative;z-index:1;filter:drop-shadow(0 2px 2px rgba(0,0,0,.5))}
+  .pack .pname{font-family:Oswald,sans-serif;font-weight:700;font-size:15px;letter-spacing:1px;text-transform:uppercase;position:relative;z-index:1;text-shadow:0 2px 3px rgba(0,0,0,.6);text-align:center;line-height:1.05;padding:0 4px}
+  .pk-bronze{background:linear-gradient(160deg,var(--bronze1),var(--bronze2))}
+  .pk-silver{background:linear-gradient(160deg,var(--silver1),var(--silver2));color:#10202b}
+  .pk-silver .pname{text-shadow:none}
+  .pk-gold{background:linear-gradient(160deg,var(--gold1),var(--gold2));color:#2a1c00}
+  .pk-gold .pname{text-shadow:none}
+  .pk-elite{background:linear-gradient(160deg,var(--elite1),var(--elite2))}
+  .pk-team{background:linear-gradient(160deg,#2f7fd6,#0b2a5c)}
+  .pk-pos{background:linear-gradient(160deg,#2fbf71,#0b4a2a)}
+
+  /* stage */
+  #stage{display:none;flex-direction:column;align-items:center;min-height:70vh}
+  .stagehead{width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
+  .stagehead .t{font-family:Oswald,sans-serif;text-transform:uppercase;letter-spacing:1px;font-size:18px;color:var(--gold)}
+  #packzone{height:360px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;position:relative;width:100%}
+  #bigpackwrap{position:relative;width:92px;height:132px;transform:scale(2.1)}
+  #bigpack{cursor:pointer;animation:float 2.2s ease-in-out infinite}
+  .piece{position:absolute;inset:0}
+  .piece.top{clip-path:polygon(0 0,100% 0,100% 24%,88% 28%,76% 23%,64% 29%,52% 24%,40% 29%,28% 23%,16% 28%,0 24%);animation:tearTop .75s cubic-bezier(.3,.1,.7,1) forwards;z-index:3}
+  .piece.bot{clip-path:polygon(0 24%,16% 28%,28% 23%,40% 29%,52% 24%,64% 29%,76% 23%,88% 28%,100% 24%,100% 100%,0 100%);animation:tearBot .7s .28s ease-in forwards;z-index:2}
+  @keyframes tearTop{0%{transform:none}25%{transform:translate(4px,-6px) rotate(6deg)}100%{transform:translate(70px,-110px) rotate(75deg);opacity:0}}
+  @keyframes tearBot{0%{transform:none;opacity:1}100%{transform:translateY(90px) scale(.9);opacity:0}}
+  .burst{position:absolute;left:50%;top:26%;width:8px;height:8px;margin:-4px;border-radius:50%;background:#fff;box-shadow:0 0 30px 18px var(--bc),0 0 70px 40px var(--bc);animation:burst .95s ease-out forwards;z-index:1}
+  @keyframes burst{0%{transform:scale(0);opacity:1}50%{opacity:1}100%{transform:scale(7);opacity:0}}
+  .peek{position:absolute;left:14%;right:14%;top:8%;height:60%;border-radius:5px;background:linear-gradient(160deg,#16402a,#07170f);border:1.5px solid rgba(255,255,255,.7);z-index:1;animation:peek .8s .15s ease-out both}
+  @keyframes peek{0%{transform:translateY(22px);opacity:0}40%{opacity:1}100%{transform:translateY(-34px);opacity:1}}
+  @keyframes float{0%,100%{translate:0 0}50%{translate:0 -8px}}
+  #bigpack.shake{animation:shake .75s ease-in-out}
+  @keyframes shake{0%,100%{rotate:0deg}10%{rotate:-7deg}20%{rotate:7deg}30%{rotate:-9deg}40%{rotate:9deg}50%{rotate:-11deg}60%{rotate:11deg}70%{rotate:-12deg}80%{rotate:12deg}90%{rotate:-6deg}}
+  .tap{font-family:Oswald,sans-serif;letter-spacing:2px;text-transform:uppercase;color:var(--chalk);margin-top:70px;animation:pulse 1.2s ease-in-out infinite}
+  @keyframes pulse{50%{opacity:.35}}
+  #flash{position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:40}
+  #flash.go{animation:flash .5s ease-out}
+  @keyframes flash{0%{opacity:.95}100%{opacity:0}}
+
+  /* cards */
+  #cards{display:none;flex-wrap:wrap;justify-content:center;gap:10px;width:100%;perspective:1100px;margin-top:4px}
+  .card{width:min(30vw,150px);aspect-ratio:5/7;cursor:pointer;opacity:0;animation:deal .45s cubic-bezier(.2,.9,.3,1.2) forwards}
+  @keyframes deal{0%{opacity:0;transform:translateY(90px) rotate(-12deg) scale(.6)}100%{opacity:1;transform:none}}
+  .inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .65s cubic-bezier(.3,1.4,.5,1)}
+  .card.flip .inner{transform:rotateY(180deg)}
+  .face{position:absolute;inset:0;border-radius:10px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;border:2px solid rgba(255,255,255,.7);box-shadow:0 6px 14px rgba(0,0,0,.5)}
+  .back{background:linear-gradient(160deg,#16402a,#07170f);display:flex;align-items:center;justify-content:center;font-size:34px}
+  .back::before{content:"";position:absolute;inset:7px;border:2px dashed rgba(255,255,255,.3);border-radius:6px}
+  .back.hint{box-shadow:0 0 18px 4px var(--hint)}
+  .front{transform:rotateY(180deg);display:flex;flex-direction:column;color:#fff;border:4px solid var(--tc);background:linear-gradient(165deg,var(--team) 0%,var(--team) 42%,#0b0b0d 125%)}
+  .front.shiny::after{content:"";position:absolute;top:-60%;left:-80%;width:55%;height:220%;transform:rotate(22deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.5),transparent);animation:shine 2.2s linear infinite;z-index:2;pointer-events:none}
+  .front.legend{animation:lborder 1.6s linear infinite}
+  @keyframes lborder{0%,100%{border-color:#7ef0ff;box-shadow:0 0 18px 4px #7ef0ff}33%{border-color:#ff7ad9;box-shadow:0 0 18px 4px #ff7ad9}66%{border-color:#ffd866;box-shadow:0 0 18px 4px #ffd866}}
+  .ovr,.pos,.tier{text-shadow:0 1px 4px rgba(0,0,0,.85)}
+  .tier b{color:var(--tc);font-weight:700}
+  .front::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(120deg,rgba(255,255,255,.1) 0 5px,transparent 5px 13px)}
+  .t-bronze{background:linear-gradient(165deg,var(--bronze1),var(--bronze2))}
+  .t-silver{background:linear-gradient(165deg,var(--silver1),var(--silver2));color:#0e1a22}
+  .t-gold{background:linear-gradient(165deg,var(--gold1),var(--gold2));color:#241800}
+  .t-elite{background:linear-gradient(165deg,var(--elite1),var(--elite2))}
+  .t-legend{background:linear-gradient(135deg,var(--legend1),var(--legend2),#ff7ad9,var(--legend1));background-size:300% 300%;animation:holo 3s linear infinite}
+  @keyframes holo{0%{background-position:0% 50%}100%{background-position:300% 50%}}
+  .ctop{display:flex;justify-content:space-between;padding:6px 7px 0;position:relative;z-index:1}
+  .ovr{font-family:Oswald,sans-serif;font-weight:700;font-size:clamp(24px,8vw,38px);line-height:.95}
+  .pos{font-family:Oswald,sans-serif;font-size:clamp(11px,3.4vw,15px);letter-spacing:1px}
+  .tier{font-family:Oswald,sans-serif;font-size:9px;letter-spacing:1px;text-transform:uppercase;opacity:.85;text-align:right}
+  .mono{flex:1;display:flex;align-items:center;justify-content:center;position:relative;z-index:1}
+  .mono span{width:56%;aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Oswald,sans-serif;font-weight:700;background:rgba(0,0,0,.38);text-shadow:0 1px 3px rgba(0,0,0,.8);
+    font-size:clamp(16px,5.4vw,26px);color:#fff;border:3px solid rgba(255,255,255,.85);box-shadow:inset 0 -8px 14px rgba(0,0,0,.3)}
+  .cbot{background:rgba(0,0,0,.62);color:#fff;padding:5px 5px 6px;text-align:center;position:relative;z-index:1}
+  .nm{font-family:Oswald,sans-serif;font-weight:700;font-size:clamp(11px,3.3vw,15px);text-transform:uppercase;line-height:1.05}
+  .tm{font-size:clamp(9px,2.7vw,12px);opacity:.9;margin-top:2px}
+  .card.glow .front{box-shadow:0 0 22px 6px var(--glow)}
+  .card.best{outline:3px solid var(--gold);outline-offset:3px;border-radius:12px}
+  #actions{display:none;gap:10px;margin-top:16px;flex-wrap:wrap;justify-content:center}
+
+  /* summary */
+  #summary{display:none;width:100%;margin-top:16px;background:var(--dark);border:2px solid var(--chalk);border-radius:10px;padding:10px 14px}
+  #summary table{width:100%;border-collapse:collapse;font-size:15px}
+  #summary td{padding:5px 2px;border-top:1px solid var(--line)}
+  #summary tr:first-child td{border-top:none}
+  #summary td:first-child{color:var(--muted);font-family:Oswald,sans-serif;text-transform:uppercase;font-size:12.5px;letter-spacing:.5px;white-space:nowrap;padding-right:10px}
+  #summary b{color:var(--gold)}
+
+  /* walkout */
+  #wo{position:fixed;inset:0;z-index:30;display:none;align-items:center;justify-content:center;flex-direction:column;background:radial-gradient(circle at 50% 45%,#1a1a22 0%,#000 75%);overflow:hidden;cursor:pointer}
+  #wo .beams{position:absolute;width:220vmax;height:220vmax;left:50%;top:50%;translate:-50% -50%;opacity:.5;
+    background:repeating-conic-gradient(from 0deg,var(--wc) 0 6deg,transparent 6deg 24deg);animation:rot 9s linear infinite;
+    -webkit-mask-image:radial-gradient(circle,#000 0,transparent 55%);mask-image:radial-gradient(circle,#000 0,transparent 55%)}
+  @keyframes rot{to{rotate:360deg}}
+  #wo .step{position:relative;font-family:Oswald,sans-serif;font-weight:700;text-transform:uppercase;text-align:center;opacity:0;line-height:1;padding:0 12px}
+  #wo .step.on{animation:slam .5s cubic-bezier(.2,1.6,.4,1) forwards}
+  @keyframes slam{0%{opacity:0;scale:3.2;filter:blur(8px)}100%{opacity:1;scale:1;filter:none}}
+  #wo-intro{font-size:clamp(22px,7.4vw,42px);color:var(--wc);letter-spacing:4px;margin-bottom:14px;text-shadow:0 0 16px var(--wc)}
+  #wo.big .beams{opacity:.85;animation-duration:4s}
+  body.quake main,body.quake #wo{animation:quake .55s linear}
+  @keyframes quake{0%,100%{translate:0 0}10%{translate:-9px 5px}20%{translate:8px -6px}30%{translate:-7px -4px}40%{translate:7px 6px}50%{translate:-5px 3px}60%{translate:5px -3px}70%{translate:-3px 2px}80%{translate:3px -2px}}
+  #show{position:fixed;inset:0;z-index:32;display:none;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;perspective:1000px}
+  #show .lbl{font-family:Oswald,sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:3px;font-size:clamp(20px,6.5vw,34px);color:var(--gold);margin-bottom:95px;animation:pulse 1s ease-in-out infinite}
+  #show .skip{font-family:Oswald,sans-serif;font-size:12px;letter-spacing:2px;color:#aaa;text-transform:uppercase;margin-top:100px}
+  .showcard{position:relative;width:150px;aspect-ratio:5/7;scale:1.9;animation:spinIn 1.25s cubic-bezier(.2,.8,.2,1) both}
+  .showcard .front{transform:none}
+  @keyframes spinIn{0%{transform:rotateY(1080deg) scale(.15);opacity:0}30%{opacity:1}100%{transform:rotateY(0) scale(1)}}
+  #wo-pos{font-size:clamp(34px,12vw,70px);color:var(--chalk);letter-spacing:6px}
+  #wo-team{font-size:clamp(24px,8vw,46px);color:var(--wc);margin-top:14px;text-shadow:0 0 18px var(--wc)}
+  #wo-ovr{font-size:clamp(90px,34vw,190px);color:#fff;text-shadow:0 0 34px var(--wc);margin-top:6px}
+  #wo-name{font-size:clamp(28px,9.5vw,58px);color:var(--gold);margin-top:2px}
+  #wo .skip{position:absolute;bottom:22px;font-size:12px;letter-spacing:2px;color:#888;text-transform:uppercase;font-family:Oswald,sans-serif}
+  #fx{position:fixed;inset:0;pointer-events:none;z-index:35}
+
+  details{margin-top:12px;background:var(--dark);border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+  summary{font-family:Oswald,sans-serif;color:var(--gold);cursor:pointer;font-size:15px;text-transform:uppercase;letter-spacing:.5px}
+  .podds{width:100%;border-collapse:collapse;margin-top:8px;font-size:13.5px;font-variant-numeric:tabular-nums}
+  .podds th,.podds td{padding:5px 3px;border-top:1px solid var(--line);text-align:right}
+  .podds th{font-family:Oswald,sans-serif;font-weight:500;color:var(--muted);font-size:12px}
+  .podds th:first-child,.podds td:first-child{text-align:left}
+  .hist{list-style:none;padding:0;margin:8px 0 0;font-size:14.5px;max-height:300px;overflow:auto}
+  .hist li{padding:5px 0;border-top:1px solid var(--line);display:flex;gap:8px}
+  .hist .o{font-family:Oswald,sans-serif;font-weight:700;min-width:26px;color:var(--gold)}
+  .hist .p{color:var(--muted);margin-left:auto;font-size:12.5px;white-space:nowrap}
+  .fine{color:var(--muted);font-size:12.5px;line-height:1.4;margin-top:14px;text-align:center}
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition-duration:.01s!important}}
+
+/* ---- combined shell ---- */
+  header{text-align:left}
+  .views{display:flex;gap:8px;padding:10px 12px;background:var(--dark);border-bottom:1px solid var(--line)}
+  .views button{flex:1;font-family:Oswald,sans-serif;font-weight:700;font-size:17px;letter-spacing:1.5px;text-transform:uppercase;padding:10px 6px;border-radius:8px;cursor:pointer;
+    background:#0d2a1a;color:var(--chalk);border:2px solid var(--line)}
+  .views button.on{background:var(--gold);color:#1a1205;border-color:var(--chalk)}
+  #view-wheels main,#view-packs main{padding-top:10px}
+  .gopacks{display:block;margin:12px auto 0;font-size:15px}
+</style>
+</head>
+<body>
+<header>
+  <h1>🏈 Wheel of <span>MUT</span> Franchise</h1>
+  <button class="ibtn" id="mute">🔊 Sound</button>
+</header>
+<div class="views"><button id="vw" class="on">🎡 Wheels</button><button id="vp">📦 Packs</button></div>
+
+<div id="view-wheels">
+<nav id="tabs"></nav>
+<main>
+  <div class="desc" id="desc"></div>
+  <div class="wheelwrap">
+    <div class="pointer"></div>
+    <canvas id="wheel" width="860" height="860"></canvas>
+    <div class="hub" id="hub">🏈</div>
+  </div>
+  <button class="spin" id="spinBtn">SPIN</button>
+  
+  <div class="result empty" id="result">Tap SPIN</div>
+
+  <details>
+    <summary>All slices &amp; odds</summary>
+    <table class="odds" id="odds"></table>
+  </details>
+
+  <details>
+    <summary>Spin history</summary>
+    <ul class="log" id="log"></ul>
+    <button class="small" id="clearLog">Clear history</button>
+  </details>
+
+  <details>
+    <summary>Weekly rules</summary>
+    <div class="rules">
+      <h3>Every week (each player)</h3>
+      <p><b>2× Weekly Spin</b> before the game. In the playoffs, spin the <b>Playoff Spin</b> instead.</p>
+      <p><b>1× Weekly Challenge</b> before kickoff. Your opponent is the referee.</p>
+      <p><b>Blowout Bonus</b>: win by 21+ and spin it once.</p>
+      <h3>Once a season</h3>
+      <p><b>Season Challenge</b>: spin at the start. Finish it during the regular season for a Jackpot.</p>
+      <h3>Win or lose</h3>
+      <p><b>Win:</b> keep this week's players for the rest of the season. <b>Lose:</b> release them, unless you earned <b>Protection</b> from your challenge.</p>
+            <h3>Challenge rewards</h3>
+      <p><b>🛡️ Protection:</b> if you lose this game, you still keep every player you earned this week. If you win, it does nothing. No pack.</p>
+      <p><b>📦 Bonus Pack:</b> after the game, open 1 Silver Pack and keep the best player. He's yours for the rest of the season, win or lose. It does NOT protect this week's other players.</p>
+      <p><b>⭐ Both:</b> you get Protection and the Bonus Pack.</p>
+      <p>Fail the challenge and you get nothing. Protection and bonus-pack players never survive the end-of-season reset.</p>
+      <h3>Trait Picks</h3>
+      <p>Spin the Position Wheel, then the Trait Wheel. Sort the league's players at that position in Madden by that trait and take the top one who is 88 OVR or lower. Clone him if he's on a CPU team.</p>
+      <h3>Jackpots</h3>
+      <p>Pick any player in the league at that OVR or lower, any position. Clone him if he's on a CPU team.</p>
+      <h3>Position upgrades</h3>
+      <p>Swap your starter at a position for a better player at the same position. Example: you start an 80 OVR TE and get a +2, so you can take any TE rated 82 or lower. The old starter stays as a backup. If you upgrade over a prestige player or your rookie, the new player is not permanent.</p>
+      <h3>"Worst starter"</h3>
+      <p>Your lowest-rated starter on the depth chart (QB, HB, WR1–3, TE, OL ×5, DL ×4, LB ×3, CB ×3, S ×2). Ties: you pick.</p>
+      <h3>Packs</h3>
+      <p>Open packs in the <b>Packs</b> tab at the top of this page. The slice tells you which pack: Bronze, Silver, Gold, Elite, Team or Position. Bronze always comes as 5 packs (use the Open 5 button). Find the player in franchise and use his real franchise rating. If he's on a CPU team, clone him instead of taking him.</p>
+      <h3>Super Bowl</h3>
+      <p>Win it and spin the <b>Super Bowl Bonus</b> wheel once.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Franchise setup guide</summary>
+    <div class="rules">
+      <ol>
+        <li><b>Create the league.</b> Online Franchise, you as commissioner, invite your opponent. Turn on <b>Fantasy Draft</b>. Enable player editing, force trades and roster edits.</li>
+        <li><b>Spin the Team Wheel</b> (each player).</li>
+        <li><b>Difficulty:</b> Simulation, All-Madden. Slider starting point: CPU QB accuracy / pass blocking / coverage / INTs about +10, same user sliders about −10. Adjust after week 1.</li>
+        <li><b>Prestige players:</b> each of you picks 1 offensive and 1 defensive player, 80 OVR or lower. Force-trade them to your team.</li>
+        <li><b>Fantasy draft:</b> every pick 69 OVR or lower (honor rule). CPU teams draft normally.</li>
+        <li><b>Rookie:</b> each of you takes one first-round rookie and keeps him permanently. He improves through Madden's normal progression.</li>
+        <li><b>Spin Season Length</b> at the start of each season.</li>
+        <li><b>Play the weekly loop.</b> Only games you actually play count for win/lose.</li>
+        <li><b>Season end:</b> release all earned players. Keep prestige players, your rookie, and anything the Super Bowl Bonus made permanent. Fill empty spots with free agents 69 OVR or lower.</li>
+      </ol>
+      <p class="note">Menu names change by Madden year. Cloning = create a player on your team and edit him to match the original. If your version can't create players in franchise, force-trade the real one instead.</p>
+    </div>
+  </details>
+</main>
+</div>
+
+<div id="view-packs" style="display:none">
+<main>
+  <section id="storeview">
+    <h2>Pick a pack</h2>
+    <div class="store" id="store"></div>
+
+    <details>
+      <summary>Pack odds (per card)</summary>
+      <table class="podds" id="oddstable"></table>
+      <p class="fine" style="text-align:left;margin-top:8px">Every pack has 5 cards. Team and Position packs can run short if there aren't enough players at a rating, so their real odds shift a little.</p>
+    </details>
+    <details>
+      <summary>Pull history</summary>
+      <ul class="hist" id="hist"></ul>
+      <button class="ibtn" id="clearhist" style="margin-top:8px">Clear history</button>
+    </details>
+    <p class="fine">Fan-made tool. Names, teams, ratings, ages, speed and jersey numbers come from a Madden NFL 26 roster export (a late-season ratings update, 1,977 players rated 60+). Your franchise file may differ by a point or two depending on which roster update you loaded. Not affiliated with the NFL or EA.</p>
+  </section>
+
+  <section id="stage">
+    <div class="stagehead"><span class="t" id="stagetitle"></span><button class="ibtn" id="back">← Packs</button></div>
+    <div id="packzone"><div id="bigpackwrap"></div><div class="tap" id="taphint">Tap to open</div></div>
+    <div id="cards"></div>
+    <div id="actions">
+      <button class="btn" id="next">Flip next</button>
+      <button class="btn ghost" id="all">Flip all</button>
+    </div>
+    <div id="summary"></div>
+    <div id="after" style="display:none;gap:10px;margin-top:14px;flex-wrap:wrap;justify-content:center">
+      <button class="btn" id="again">Open another</button>
+      <button class="btn ghost" id="back2">Back to packs</button>
+    </div>
+  </section>
+</main>
+</div>
+
+
+<div id="wo"><div class="beams"></div>
+  <div class="step" id="wo-intro"></div><div class="step" id="wo-pos"></div><div class="step" id="wo-team"></div><div class="step" id="wo-ovr"></div><div class="step" id="wo-name"></div>
+  <div class="skip">Tap to skip</div>
+</div>
+<div id="show"></div>
+<div id="flash"></div>
+<canvas id="fx"></canvas>
+
+
+<script>
+window.curView=location.hash==="#packs"?"packs":"wheels";
+window.showView=function(v){
+  window.curView=v;
+  document.getElementById("view-wheels").style.display=v==="wheels"?"block":"none";
+  document.getElementById("view-packs").style.display=v==="packs"?"block":"none";
+  document.getElementById("vw").classList.toggle("on",v==="wheels");
+  document.getElementById("vp").classList.toggle("on",v==="packs");
+  try{ history.replaceState(null,"",v==="packs"?"#packs":"#"+(window.curWheel||"weekly")); }catch(e){}
+  window.scrollTo(0,0);
+};
+</script>
+<script>
+(function(){
+
+const COLORS = {
+  Pack:["#1f7a46","#17633a"], Upgrade:["#1d5fa8","#174e8c"], Sign:["#8a4b22","#733d1a"], Bonus:["#6a3fa0","#573286"], Jackpot:["#c9940a","#a97b06"], Trait:["#8a4b22","#733d1a"], Protection:["#1d5fa8","#174e8c"], "Bonus Pack":["#1f7a46","#17633a"], Both:["#c9940a","#a97b06"],
+  Position:["#1f7a46","#17633a"], "Stat Goal":["#1d5fa8","#174e8c"], Handicap:["#b3541e","#964515"], Gamble:["#a3263f","#871c32"],
+  Setup:["#1f7a46","#17633a"], Bad:["#5b6660","#4a544f"]
+};
+const J="Jackpot", P="Pack", U="Upgrade", S="Sign", B="Bonus", G="Stat Goal", H="Handicap", R="Gamble", X="Setup";
+const s=(e,t,k,w,b,n)=>({e,t,k,w,b,n});
+
+const WHEELS = {
+  weekly: {
+    name:"Weekly Spin", icon:"🏈",
+    desc:"Regular season reward wheel. Each player spins 2× before every game.",
+    slices:[
+      s("📦","5 Bronze Packs",P,4,"Open 5 Bronze Packs. Keep the single best player."),
+      s("📦","Silver Pack",P,3,"Open 1 Silver Pack. Keep the best player."),
+      s("📦","Gold Pack",P,2,"Open 1 Gold Pack. Keep the best player."),
+      s("📦","Elite Pack",P,1,"Open 1 Elite Pack. Keep the best player."),
+      s("📦","Team Pack",P,2,"Spin the Team Wheel. Open that team's Team Pack. Keep the best player."),
+      s("📦","Position Pack",P,3,"Spin the Position Wheel. Open that Position Pack. Keep the best player."),
+      s("📦","Worst Position Pack",P,3,"Open a Position Pack for your WORST starter's position. Keep the best player."),
+      s("📦","5 Bronze: 2 Best",P,2,"Open 5 Bronze Packs. Keep the 2 best players."),
+      s("📦","Silver: 2 Best",P,2,"Open 1 Silver Pack. Keep the 2 best players."),
+      s("📦","Silver: Oldest",P,2,"Open 1 Silver Pack. Keep the OLDEST player."),
+      s("📦","Silver: Youngest",P,2,"Open 1 Silver Pack. Keep the YOUNGEST player."),
+      s("📦","Silver: Off + Def",P,1,"Open 1 Silver Pack. Keep the best offensive player AND the best defensive player."),
+      s("💰","75 OVR Jackpot",J,3,"Pick ANY player rated 75 OVR or lower."),
+      s("💰","78 OVR Jackpot",J,3,"Pick ANY player rated 78 OVR or lower."),
+      s("💰","80 OVR Jackpot",J,2,"Pick ANY player rated 80 OVR or lower."),
+      s("💰","83 OVR Jackpot",J,1,"Pick ANY player rated 83 OVR or lower."),
+      s("💰","86 OVR Jackpot",J,1,"Pick ANY player rated 86 OVR or lower."),
+      s("✍️","Position Player",S,3,"Spin the Position Wheel. Pick any player there rated 80 OVR or lower."),
+      s("✍️","Team Player",S,2,"Spin the Team Wheel. Pick any player on that team rated 82 OVR or lower."),
+      s("✍️","Free Agent",S,3,"Sign any free agent you want."),
+      s("🔎","Trait Pick",S,8,"Spin the Position Wheel, then the Trait Wheel. Take the player in the league at that position who fits the trait."),
+      s("✍️","Veteran (30+)",S,1,"Pick any player age 30 or older, 84 OVR or lower."),
+      s("✍️","Rookie / Young (24−)",S,1,"Pick any player age 24 or younger, 82 OVR or lower."),
+      s("⬆️","+2 Position Upgrade",U,3,"Spin the Position Wheel. Swap your starter there for any player rated up to +2 OVR higher (80 OVR TE → any TE 82 or lower)."),
+      s("⬆️","+4 Position Upgrade",U,2,"Spin the Position Wheel. Swap your starter there for any player rated up to +4 OVR higher."),
+      s("⬆️","+3 Worst Position",U,2,"Swap your WORST starter for any player at his position rated up to +3 OVR higher."),
+      s("⭐","Wild Card",B,1,"Pick any slice on this wheel."),
+      s("🎓","Bonus Rookie",B,1,"Next season you get a second permanent first-round rookie. Already have a bonus rookie coming next season? Spin again."),
+      s("⭐","Spin Twice",B,1,"Spin this wheel 2 more times. Keep both."),
+      s("⭐","Steal",B,1,"Take one player your opponent earned this season (not prestige or rookie).")
+    ]
+  },
+  playoff: {
+    name:"Playoff Spin", icon:"🔥",
+    desc:"The juiced wheel. In the playoffs, each player spins this 2× before every game instead of the Weekly Spin.",
+    slices:[
+      s("📦","Gold Pack",P,3,"Open 1 Gold Pack. Keep the 2 best players."),
+      s("📦","Elite Pack",P,3,"Open 1 Elite Pack. Keep the best player."),
+      s("📦","3 Gold Packs",P,2,"Open 3 Gold Packs. Keep the best player from each."),
+      s("📦","Worst Position Pack",P,2,"Open up to 3 Position Packs for your WORST starter's position. Keep the single best player."),
+      s("💰","83 OVR Jackpot",J,3,"Pick ANY player rated 83 OVR or lower."),
+      s("💰","86 OVR Jackpot",J,3,"Pick ANY player rated 86 OVR or lower."),
+      s("💰","88 OVR Jackpot",J,2,"Pick ANY player rated 88 OVR or lower."),
+      s("💰","90 OVR Jackpot",J,1,"Pick ANY player rated 90 OVR or lower."),
+      s("✍️","Position Player",S,3,"Spin the Position Wheel. Pick any player there rated 86 OVR or lower."),
+      s("✍️","Team Player",S,2,"Spin the Team Wheel. Pick any player on that team, any OVR."),
+      s("⬆️","+4 Position Upgrade",U,3,"Spin the Position Wheel. Swap your starter there for any player rated up to +4 OVR higher."),
+      s("⬆️","+6 Position Upgrade",U,2,"Spin the Position Wheel. Swap your starter there for any player rated up to +6 OVR higher."),
+      s("⬆️","+5 Worst Position",U,2,"Swap your WORST starter for any player at his position rated up to +5 OVR higher."),
+      s("⭐","Wild Card",B,1,"Pick any slice on this wheel."),
+      s("⭐","Any Player",B,1,"Spin the Position Wheel. Pick ANY player at that position. No OVR cap.")
+    ]
+  },
+  position: {
+    name:"Position Wheel", icon:"📋",
+    desc:"Spin whenever a reward says \"spin the Position Wheel.\"",
+    slices:[
+      s("🏈","QB","Position",1,"Quarterback"),
+      s("🏈","HB","Position",2,"Running back (HB / FB)"),
+      s("🏈","WR","Position",3,"Wide receiver"),
+      s("🏈","TE","Position",2,"Tight end"),
+      s("🏈","OL","Position",3,"Offensive line (LT, LG, C, RG, RT)"),
+      s("🏈","DL","Position",3,"Defensive line (DE, DT)"),
+      s("🏈","LB","Position",2,"Linebacker (MLB, OLB)"),
+      s("🏈","CB","Position",3,"Cornerback"),
+      s("🏈","S","Position",2,"Safety (FS, SS)"),
+      s("⭐","Your Choice",B,1,"Pick any position.")
+    ]
+  },
+  trait: {
+    name:"Trait Wheel", icon:"🔎",
+    desc:"Spin after the Position Wheel when you land on Trait Pick. It tells you which player in the league to take at that position.",
+    slices:[
+      s("🔎","Oldest","Trait",1,"Take the player at your position with the OLDEST player. 88 OVR or lower: skip anyone rated higher. Ties: you pick."),
+      s("🔎","Youngest","Trait",1,"Take the player at your position with the YOUNGEST player (rookies count). 88 OVR or lower: skip anyone rated higher. Ties: you pick."),
+      s("🔎","Fastest","Trait",1,"Take the player at your position with the highest Speed rating. 88 OVR or lower: skip anyone rated higher. Ties: you pick."),
+      s("🔎","Strongest","Trait",1,"Take the player at your position with the highest Strength rating. 88 OVR or lower: skip anyone rated higher. Ties: you pick."),
+      s("🔎","Quickest","Trait",1,"Take the player at your position with the highest Acceleration rating. 88 OVR or lower: skip anyone rated higher. Ties: you pick."),
+      s("🔎","Most Agile","Trait",1,"Take the player at your position with the highest Agility rating. 88 OVR or lower: skip anyone rated higher. Ties: you pick."),
+      s("🔎","Smartest","Trait",1,"Take the player at your position with the highest Awareness rating. 88 OVR or lower: skip anyone rated higher. Ties: you pick."),
+      s("🔎","Tallest","Trait",1,"Take the player at your position with the TALLEST player. 88 OVR or lower: skip anyone rated higher. Ties: you pick."),
+      s("🔎","Shortest","Trait",1,"Take the player at your position with the SHORTEST player. 88 OVR or lower: skip anyone rated higher. Ties: you pick."),
+      s("🔎","Heaviest","Trait",1,"Take the player at your position with the HEAVIEST player. 88 OVR or lower: skip anyone rated higher. Ties: you pick."),
+      s("🔎","Lightest","Trait",1,"Take the player at your position with the LIGHTEST player. 88 OVR or lower: skip anyone rated higher. Ties: you pick."),
+      s("🔎","Lowest Jersey #","Trait",1,"Take the player at your position with the LOWEST jersey number. 88 OVR or lower: skip anyone rated higher. Ties: you pick."),
+      s("🔎","Highest Jersey #","Trait",1,"Take the player at your position with the HIGHEST jersey number. 88 OVR or lower: skip anyone rated higher. Ties: you pick."),
+      s("🔎","Highest Paid","Trait",1,"Take the player at your position with the biggest salary. 88 OVR or lower: skip anyone rated higher. Ties: you pick."),
+      s("🔎","Most Years Pro","Trait",1,"Take the player at your position with the most years in the league. 88 OVR or lower: skip anyone rated higher. Ties: you pick."),
+      s("🔎","Best Rookie","Trait",1,"Take the player at your position with the highest-rated rookie. 88 OVR or lower: skip anyone rated higher. Ties: you pick."),
+      s("🔎","First in ABC Order","Trait",1,"Take the player at your position with the last name that comes FIRST alphabetically. 88 OVR or lower: skip anyone rated higher. Ties: you pick."),
+      s("🔎","Last in ABC Order","Trait",1,"Take the player at your position with the last name that comes LAST alphabetically. 88 OVR or lower: skip anyone rated higher. Ties: you pick.")
+    ]
+  },
+  challenge: {
+    name:"Weekly Challenge", icon:"🎯",
+    desc:"Each player spins 1× before every game. Each challenge shows its reward: 🛡️ Protection (blue), 📦 Bonus Pack (green), or ⭐ both (gold).",
+    slices:[
+      s("🛡️","Get an Interception","Protection",3,"Your defense gets an interception.","Reward: 🛡️ Protection only. No pack."),
+      s("🛡️","3 Sacks","Protection",3,"Your defense gets 3+ sacks.","Reward: 🛡️ Protection only. No pack."),
+      s("🛡️","No Turnovers","Protection",2,"Finish the game with zero turnovers.","Reward: 🛡️ Protection only. No pack."),
+      s("🛡️","HB: 100 Yds + TD","Protection",3,"Your running back gets 100+ rushing yards and a TD.","Reward: 🛡️ Protection only. No pack."),
+      s("🛡️","Allow 14 or Less","Protection",2,"Hold the CPU to 14 points or fewer.","Reward: 🛡️ Protection only. No pack."),
+      s("🛡️","New Guy Scores","Protection",2,"A player you earned this week scores a TD or forces a turnover.","Reward: 🛡️ Protection only. No pack."),
+      s("📦","WR: 100 Yds + TD","Bonus Pack",3,"One wide receiver gets 100+ receiving yards and a TD.","Reward: 📦 1 Bonus Silver Pack (keep the best player). No Protection."),
+      s("📦","TE: 100 Yds + TD","Bonus Pack",2,"Your tight end gets 100+ receiving yards and a TD.","Reward: 📦 1 Bonus Silver Pack (keep the best player). No Protection."),
+      s("📦","Rookie Scores","Bonus Pack",2,"Your rookie scores a TD (defense: sack or INT; OL: 0 sacks allowed).","Reward: 📦 1 Bonus Silver Pack (keep the best player). No Protection."),
+      s("📦","4 Different TD Scorers","Bonus Pack",2,"Score touchdowns with 4 different players.","Reward: 📦 1 Bonus Silver Pack (keep the best player). No Protection."),
+      s("📦","Score 35+","Bonus Pack",2,"Score 35 or more points.","Reward: 📦 1 Bonus Silver Pack (keep the best player). No Protection."),
+      s("📦","Win by 14+","Bonus Pack",2,"Win the game by 14 or more.","Reward: 📦 1 Bonus Silver Pack (keep the best player). No Protection."),
+      s("⭐","QB: 300 Yds + 3 TDs","Both",2,"Your QB throws for 300+ yards and 3+ TDs.","Reward: 🛡️ Protection AND 📦 1 Bonus Silver Pack (keep the best player)."),
+      s("⭐","Force 3 Turnovers","Both",2,"Force 3+ turnovers.","Reward: 🛡️ Protection AND 📦 1 Bonus Silver Pack (keep the best player)."),
+      s("⭐","TFL + Interception","Both",2,"Get at least 1 tackle for loss and 1 interception.","Reward: 🛡️ Protection AND 📦 1 Bonus Silver Pack (keep the best player)."),
+      s("⭐","Defensive TD","Both",1,"Score a defensive touchdown.","Reward: 🛡️ Protection AND 📦 1 Bonus Gold Pack (keep the best player).")
+    ]
+  },
+  seasonchal: {
+    name:"Season Challenge", icon:"🏅",
+    desc:"Each player spins 1× at the start of the season. Finish it by the end of the regular season = 86 OVR Jackpot for the playoffs.",
+    slices:[
+      s("🏅","TD with 8 Players",G,2,"Score a touchdown with 8 different players this season."),
+      s("🏅","15 Sacks",G,2,"Get 15 total sacks this season."),
+      s("🏅","10 Takeaways",G,2,"Force 10 total turnovers this season."),
+      s("🏅","Rookie: 5 TDs",G,2,"Your rookie scores 5 TDs this season (defense: 5 sacks or INTs combined; OL: 2 or fewer sacks allowed)."),
+      s("🏅","1,500 Pass Yards",G,2,"Throw for 1,500+ yards this season."),
+      s("🏅","700 Rush Yards",G,2,"One running back rushes for 700+ yards this season."),
+      s("🏅","Win Every Game",G,1,"Go undefeated in the games you play.","Reward: 90 OVR Jackpot"),
+      s("🏅","3 Weekly Challenges",G,2,"Complete 3 Weekly Challenges this season."),
+      s("🏅","2 Defensive TDs",G,1,"Score 2 defensive touchdowns this season."),
+      s("🏅","Hold 3 Teams to 10",G,2,"Hold 3 opponents to 10 points or fewer.")
+    ]
+  },
+  blowout: {
+    name:"Blowout Bonus", icon:"💥",
+    desc:"Win a game by 21+ and spin this once. Rewards follow the normal win/lose rules next week.",
+    slices:[
+      s("📦","Silver Pack",P,4,"Open 1 Silver Pack. Keep the best player."),
+      s("📦","Silver: 2 Best",P,2,"Open 1 Silver Pack. Keep the 2 best players."),
+      s("💰","78 OVR Jackpot",J,2,"Pick ANY player rated 78 OVR or lower."),
+      s("💰","82 OVR Jackpot",J,1,"Pick ANY player rated 82 OVR or lower."),
+      s("⭐","Extra Weekly Spin",B,3,"+1 Weekly Spin next week."),
+      s("⭐","Free Protection",B,1,"Bank 1 Protection. Use it any week this season."),
+      s("⭐","+2 Position Upgrade",U,2,"Spin the Position Wheel. Swap your starter there for any player rated up to +2 OVR higher."),
+    ]
+  },
+  superbowl: {
+    name:"Super Bowl Bonus", icon:"🏆",
+    desc:"Spin once when you win the Super Bowl.",
+    slices:[
+      s("🏆","Prestige: 90 or Lower",B,2,"Add a permanent prestige player: any player 90 OVR or lower."),
+      s("🏆","Prestige: Any OVR",B,2,"Spin the Position Wheel. Add a permanent prestige player at that position, any OVR."),
+      s("🏆","Bonus Rookie",B,2,"Add a second permanent rookie from next year's first round. Your pick. Already have a bonus rookie coming? Spin again."),
+      s("🏆","Keep an Earned Player",B,2,"Make one player you earned this season permanent."),
+      s("🏆","+3 to Prestige Players",B,1,"All your prestige players gain +3 OVR."),
+      s("🏆","2 Free Protections",B,1,"Start next season with 2 Protections. Use one in any week.")
+    ]
+  },
+  team: {
+    name:"Team Wheel", icon:"🏟️", group:"setup",
+    desc:"Setup: each player spins to get their team. Spin again if you land on your opponent's team.",
+    slices:["Cardinals","Falcons","Ravens","Bills","Panthers","Bears","Bengals","Browns","Cowboys","Broncos","Lions","Packers","Texans","Colts","Jaguars","Chiefs","Raiders","Chargers","Rams","Dolphins","Vikings","Patriots","Saints","Giants","Jets","Eagles","Steelers","49ers","Seahawks","Buccaneers","Titans","Commanders"]
+      .map(t=>s("🏟️",t,X,1,`Your team: the ${t}.`))
+  },
+  season: {
+    name:"Season Length", icon:"📅", group:"setup",
+    desc:"Setup: spin once at the start of each season for how many games you play before simming to the playoffs.",
+    slices:[5,6,7,8].map(n=>s("📅",n+" Games",X,1,`Play ${n} games, then sim to the playoffs.`))
+  }
+};
+
+let current="weekly", rotation=0, spinning=false;
+const canvas=document.getElementById("wheel"), ctx=canvas.getContext("2d");
+const LOG_KEY="wom-log-v2";
+let log=[];
+try{ log=JSON.parse(localStorage.getItem(LOG_KEY)||"[]"); }catch(e){ log=[]; }
+
+const total=w=>WHEELS[w].slices.reduce((a,x)=>a+x.w,0);
+const tagHTML=k=>`<span class="tag" style="background:${COLORS[k][0]}">${k==="Bad"?"No luck":k}</span>`;
+
+function draw(){
+  const W=canvas.width, R=W/2, r=R-20;
+  const sl=WHEELS[current].slices, T=total(current);
+  ctx.clearRect(0,0,W,W);
+  ctx.save(); ctx.translate(R,R);
+  ctx.beginPath(); ctx.arc(0,0,R-2,0,Math.PI*2); ctx.fillStyle="#0a1f14"; ctx.fill();
+  ctx.beginPath(); ctx.arc(0,0,R-8,0,Math.PI*2); ctx.fillStyle="#f4f6f1"; ctx.fill();
+  ctx.rotate(rotation);
+  let a=-Math.PI/2;
+  sl.forEach((x,i)=>{
+    const span=x.w/T*Math.PI*2;
+    ctx.beginPath(); ctx.moveTo(0,0); ctx.arc(0,0,r,a,a+span); ctx.closePath();
+    ctx.fillStyle=COLORS[x.k][i%2]; ctx.fill();
+    ctx.strokeStyle="rgba(244,246,241,.85)"; ctx.lineWidth=2.5; ctx.stroke();
+    ctx.save(); ctx.rotate(a+span/2);
+    ctx.textAlign="right"; ctx.textBaseline="middle";
+    const fs=Math.max(15, Math.min(34, span*r*0.5));
+    ctx.font=`500 ${fs}px Oswald, sans-serif`; ctx.fillStyle="#fff";
+    let label=x.t.toUpperCase(); const maxW=r*0.74;
+    while(ctx.measureText(label).width>maxW && label.length>4) label=label.slice(0,-2)+"…";
+    ctx.fillText(label, r-14, 1);
+    ctx.restore();
+    a+=span;
+  });
+  ctx.restore();
+}
+
+function pick(){
+  const sl=WHEELS[current].slices; let x=Math.random()*total(current);
+  for(let i=0;i<sl.length;i++){ x-=sl[i].w; if(x<0) return i; }
+  return sl.length-1;
+}
+
+function spin(){
+  if(spinning) return;
+  spinning=true; document.getElementById("spinBtn").disabled=true;
+  const sl=WHEELS[current].slices, T=total(current), idx=pick();
+  let start=0; for(let i=0;i<idx;i++) start+=sl[i].w/T*Math.PI*2;
+  const span=sl[idx].w/T*Math.PI*2;
+  const within=start+span*(0.15+Math.random()*0.7);
+  const turns=Math.PI*2*(6+Math.floor(Math.random()*3));
+  const from=rotation % (Math.PI*2);
+  const target=-within-turns;
+  const dur=4200+Math.random()*800, t0=performance.now();
+  const res=document.getElementById("result");
+  res.className="result empty"; res.textContent="Spinning…";
+  function step(now){
+    const p=Math.min(1,(now-t0)/dur), ease=1-Math.pow(1-p,4);
+    rotation=from+(target-from)*ease; draw();
+    if(p<1) requestAnimationFrame(step);
+    else{ rotation=target%(Math.PI*2); draw(); spinning=false; document.getElementById("spinBtn").disabled=false; show(sl[idx]); }
+  }
+  requestAnimationFrame(step);
+}
+
+function show(x){
+  const res=document.getElementById("result");
+  res.className="result pop";
+  res.innerHTML=`<div class="rtitle"><span>${x.e}</span><span>${x.t}</span>${tagHTML(x.k)}</div>
+    <div class="rbody">${x.b}</div>${x.n?`<div class="rnote">${x.n}</div>`:""}${/pack/i.test(x.t+" "+x.b+" "+(x.n||""))?`<button class="btn gopacks">📦 Go to packs</button>`:""}`;
+  const gp=res.querySelector(".gopacks"); if(gp) gp.onclick=()=>window.showView("packs");
+  log.unshift({w:WHEELS[current].name,e:x.e,t:x.t}); log=log.slice(0,60);
+  try{ localStorage.setItem(LOG_KEY,JSON.stringify(log)); }catch(e){}
+  renderLog();
+}
+
+function renderLog(){
+  document.getElementById("log").innerHTML = log.length
+    ? log.map(l=>`<li><span class="w">${l.w}</span><span>${l.e} ${l.t}</span></li>`).join("")
+    : `<li style="color:var(--muted)">No spins yet.</li>`;
+}
+
+function renderOdds(){
+  const sl=WHEELS[current].slices, T=total(current);
+  document.getElementById("odds").innerHTML=sl.map(x=>
+    `<tr><td><b>${x.t}</b>${tagHTML(x.k)}<div class="d">${x.b}${x.n?" "+x.n+".":""}</div></td><td class="p">${(x.w/T*100).toFixed(1)}%</td></tr>`).join("");
+}
+
+function select(key){
+  if(spinning) return;
+  current=key; window.curWheel=key; rotation=0;
+  document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.k===key));
+  document.getElementById("desc").textContent=WHEELS[key].desc;
+  document.getElementById("hub").textContent=WHEELS[key].icon;
+  const res=document.getElementById("result"); res.className="result empty"; res.textContent="Tap SPIN";
+  renderOdds(); draw();
+  if(window.curView!=="packs"&&location.hash!=="#"+key){ try{ history.replaceState(null,"","#"+key); }catch(e){} }
+}
+
+const tabs=document.getElementById("tabs");
+[["weekly","Weekly"],["setup","Setup"]].forEach(([g,label])=>{
+  const row=document.createElement("div"); row.className="navrow";
+  row.innerHTML=`<span class="navlabel">${label}</span>`;
+  Object.entries(WHEELS).filter(([k,w])=>(w.group||"weekly")===g).forEach(([k,w])=>{
+    const b=document.createElement("button"); b.dataset.k=k; b.textContent=`${w.icon} ${w.name}`;
+    b.onclick=()=>select(k); row.appendChild(b);
+  });
+  tabs.appendChild(row);
+});
+document.getElementById("spinBtn").onclick=spin;
+document.getElementById("hub").onclick=spin;
+document.getElementById("clearLog").onclick=()=>{ log=[]; try{localStorage.removeItem(LOG_KEY);}catch(e){} renderLog(); };
+window.addEventListener("hashchange",()=>{ const k=location.hash.slice(1); if(WHEELS[k]&&k!==current) select(k); });
+
+renderLog(); select(WHEELS[location.hash.slice(1)]?location.hash.slice(1):"weekly");
+if(document.fonts&&document.fonts.ready) document.fonts.ready.then(draw);
+
+})();
+</script>
+<script>
+(function(){
+
+const TEAMS = {
+"Cardinals":["#97233F","Trey McBride,TE,97,25,87,85;Budda Baker,SS,90,29,90,3;Josh Sweat,RE,85,28,85,10;Paris Johnson Jr,LT,85,24,73,70;Hjalte Froholdt,C,84,29,71,72;Jalen Thompson,FS,83,27,90,34;James Conner,HB,83,30,89,6;Calais Campbell,DT,82,39,72,93;Michael Wilson,WR,81,25,89,14;Marvin Harrison Jr,WR,80,23,93,18;Mack Wilson Sr,WLB,79,27,87,2;Garrett Williams,CB,78,24,88,21;Sean Murphy-Bunting,CB,78,28,91,23;Walter Nolen,DT,78,21,81,97;Trey Benson,HB,77,23,93,33;Will Johnson,CB,77,22,89,0;Zaven Collins,LE,76,26,85,25;Chad Ryland,K,75,25,73,38;Dalvin Tomlinson,DT,75,31,70,94;Jacoby Brissett,QB,75,32,79,7;Kyler Murray,QB,75,28,90,1;Zay Jones,WR,75,30,89,17;Baron Browning,LE,74,26,86,5;Bilal Nichols,DT,74,28,73,92;Blake Gillikin,P,74,27,73,12;Greg Dortch,WR,74,27,90,4;Kei'Trel Clark,CB,74,24,92,13;Max Melton,CB,74,23,93,16;Evan Brown,LG,73,28,69,63;Jonah Williams,RT,73,27,69,73;Jordan Burch,RE,73,23,83,52;Matt Haack,P,73,31,81,39;Starling Thomas V,CB,73,25,93,24;Akeem Davis-Gaither,MLB,72,27,87,27;BJ Ojulari,LE,72,23,86,9;Dadrion Taylor-Demerson,FS,72,24,92,42;Joshua Karty,K,72,23,75,98;Kelvin Beachum,LT,72,36,63,68;Dante Stills,DT,71,25,76,55;Denzel Burke,CB,71,22,90,29;Elijah Jones,CB,71,25,91,28;Michael Carter,HB,71,26,87,22;Will Hernandez,RG,71,29,68,76;Bam Knight,HB,70,24,88,20;Cody Simon,WLB,70,23,87,50;Darius Robinson,DT,70,23,74,56;Emari Demercado,HB,70,26,91,31;Isaiah Adams,RG,70,25,65,74;Pharaoh Brown,TE,69,31,80,49;Elijah Higgins,TE,68,24,89,84;L.J. Collier,DT,68,29,77,91;Christian Jones,RT,67,25,71,75;Corey Kiner,HB,67,23,88,37;Jalen Brooks,WR,67,25,86,86;Owen Pappoe,MLB,67,24,89,44;Simi Fehoko,WR,67,27,90,80;Demontrey Jacobs,LT,66,26,67,66;Jon Gaines II,C,66,25,72,71;Kitan Crawford,FS,66,23,92,36;Xavier Weaver,WR,66,24,91,89;Hayden Conner,LG,65,23,65,58;Josiah Deguara,TE,65,28,85,45;Kalen King,CB,65,22,87,35;PJ Mustipher,DT,65,26,59,79;Tip Reiman,TE,65,23,84,87;Joey Blount,SS,64,26,92,32;Josh Fryar,RT,63,23,70,78;Austin Keys,MLB,62,23,85,53;J.J. Russell,MLB,62,26,82,51;Andre Baccellia,WR,61,28,94,82;Travis Vokolek,TE,61,27,77,81"],
+"Falcons":["#A71930","Bijan Robinson,HB,95,23,91,7;Jessie Bates III,FS,94,28,90,3;Chris Lindstrom,RG,93,28,76,63;Drake London,WR,92,24,88,5;Jake Matthews,LT,89,33,71,70;A.J. Terrell Jr,CB,88,26,91,24;Kaden Elliss,MLB,84,30,86,55;Divine Deablo,WLB,81,27,88,0;Kaleb McGary,RT,80,30,73,76;Kyle Pitts Sr,TE,80,24,90,8;Ryan Neuzil,C,80,28,69,64;Tyler Allgeier,HB,80,25,86,25;David Onyemata,DT,79,32,73,90;Jalon Walker,LE,79,21,86,11;James Pearce Jr,RE,79,21,90,27;Xavier Watts,SS,79,23,86,31;Leonard Floyd,RE,78,32,85,56;Arnold Ebiketie,LE,77,26,84,17;Bradley Pinion,P,77,31,71,13;Darnell Mooney,WR,77,27,92,1;Matthew Bergeron,LG,76,25,63,65;Mike Hughes,CB,76,28,88,21;Clark Phillips III,CB,75,23,89,22;Zane Gonzalez,K,74,30,72,45;Billy Bowman Jr,CB,73,22,92,33;Brandon Dorlus,DT,73,24,77,54;Dee Alford,CB,73,27,89,20;Kirk Cousins,QB,73,37,69,18;Mike Ford Jr,CB,73,30,89,28;Ruke Orhorhoro,DT,73,23,76,98;Zach Harrison,DT,73,24,83,96;Michael Penix Jr,QB,72,25,84,9;Bralen Trice,RE,71,24,82,48;Elijah Wilkinson,RT,71,30,70,71;Kentavius Street,DT,71,29,77,93;KhaDarel Hodge,WR,71,30,90,4;Ronnie Harrison Jr,WLB,71,28,86,36;Troy Andersen,WLB,71,26,91,44;C.J. Henderson,CB,70,26,91,39;David Sills V,WR,69,29,87,87;DeMarcco Hellams,FS,69,25,87,23;JD Bertrand,SLB,69,25,83,40;LaCale London,DT,69,28,72,94;Jammie Robinson,SS,68,24,86,34;Sam Roberts,DT,68,27,69,99;Khalid Kareem,RE,67,27,79,92;Nate Carter,HB,67,23,91,38;Casey Washington,WR,66,24,90,82;Dylan Drummond,WR,66,25,88,81;Malik Heath,WR,66,25,87,86;Charlie Woerner,TE,65,27,82,89;Cobee Bryant,CB,65,23,88,37;Deven Thompkins,WR,65,25,94,83;Elijah Garcia,DT,65,26,72,91;Michael Jerrell,RT,65,26,74,72;Jovaughn Gwyn,C,64,26,68,52;Jack Nelson,LT,63,23,67,69;Josh Woods,WLB,63,29,84,42;Kyle Hinton,RG,63,27,75,68;Natrone Brooks,CB,63,25,88,35;Storm Norton,LT,63,31,65,77;Teagan Quitoriano,TE,63,25,74,85;DeAngelo Malone,MLB,62,26,87,51;Easton Stick,QB,62,28,85,12"],
+"Ravens":["#241773","Derrick Henry,HB,94,31,93,22;Lamar Jackson,QB,94,28,96,8;Kyle Hamilton,SS,93,24,88,14;Roquan Smith,MLB,93,28,86,0;Nnamdi Madubuike,DT,92,27,81,92;Mark Andrews,TE,91,29,87,89;Zay Flowers,WR,88,24,93,4;Marlon Humphrey,CB,87,29,91,44;Tyler Linderbaum,C,87,25,77,64;Ronnie Stanley,LT,86,31,71,79;Chidobe Awuzie,CB,83,30,90,3;Nate Wiggins,CB,83,22,96,2;Patrick Ricard,FB,82,31,71,42;Kyle Van Noy,LE,80,34,83,53;Alohi Gilman,SS,79,27,87,12;DeAndre Hopkins,WR,79,33,89,10;Travis Jones,DT,79,25,75,98;Ar'Darius Washington,FS,78,25,84,29;Malaki Starks,FS,78,21,89,24;Roger Rosengarten,RT,78,23,75,70;Trenton Simpson,WLB,78,24,91,32;Tyler Loop,K,78,24,74,33;Justice Hill,HB,77,27,90,43;Rashod Bateman,WR,77,25,92,7;Jordan Stout,P,76,27,84,11;Dre'Mont Jones,RE,75,28,74,41;Isaiah Likely,TE,75,25,83,80;John Jenkins,DT,75,36,71,94;Keaton Mitchell,HB,75,23,94,34;Mike Green,LE,75,22,88,45;Teddye Buchanan,WLB,75,22,86,40;Daniel Faalele,RG,74,25,52,77;Tavius Robinson,LE,74,26,84,95;Adisa Isaac,RE,72,23,81,50;Brent Urban,DT,72,34,71,97;David Ojabo,RE,72,25,87,90;Andrew Vorhees,LG,71,26,65,72;Broderick Washington,DT,71,28,70,96;Devontez Walker,WR,71,24,94,81;Emery Jones Jr,LG,71,21,70,51;Taven Bryan,DT,71,29,77,58;Tylan Wallace,WR,71,26,90,16;Lajohntay Wester,WR,70,23,90,83;T.J. Tampa,CB,70,23,88,27;Bilhal Kone,CB,69,23,91,31;Joe Noteboom,RT,69,30,71,68;Rasheen Ali,HB,69,24,92,26;Robert Longerbeam,CB,69,24,93,37;Charlie Kolar,TE,68,26,83,88;Tyler Huntley,QB,68,27,85,5;Aeneas Peebles,DT,67,23,73,93;Carson Vinson,RT,67,23,68,71;Cooper Rush,QB,65,31,73,15;Keyon Martin,CB,65,24,92,38;Carl Jones,WLB,64,24,89,48;C.J. Okoye,DT,63,23,58,91;Jacob Hummel,MLB,62,26,87,35;Jay Higgins IV,MLB,61,23,78,49;Corey Bullock,C,60,23,62,67;Keondre Jackson,FS,60,23,83,39"],
+"Bills":["#00338D","Josh Allen,QB,99,29,88,17;James Cook III,HB,93,25,92,4;Dion Dawkins,LT,88,31,75,73;Greg Rousseau,LE,88,25,86,50;Joey Bosa,RE,86,30,79,97;Spencer Brown,RT,85,27,74,79;Taron Johnson,CB,84,29,90,7;Christian Benford,CB,83,24,88,47;Matt Milano,WLB,83,31,86,58;Reggie Gilliam,FB,83,28,87,41;Terrel Bernard,MLB,83,26,86,8;Ed Oliver,DT,82,27,82,91;Khalil Shakir,WR,82,25,90,10;Connor McGovern,C,81,27,69,66;Dalton Kincaid,TE,81,25,86,86;DaQuan Jones,DT,81,33,70,92;Cole Bishop,FS,80,22,91,24;David Edwards,LG,79,28,68,76;Matt Prater,K,79,41,69,15;Brandin Cooks,WR,78,31,93,18;Maxwell Hairston,CB,78,22,96,31;Shaq Thompson,WLB,78,31,85,45;Taylor Rapp,SS,77,27,86,9;Tre'Davious White,CB,77,30,90,27;Dawson Knox,TE,76,28,86,88;Jordan Poyer,SS,76,34,87,21;Joshua Palmer,WR,76,25,88,5;Mitch Wishnowsky,P,76,33,84,19;A.J. Epenesa,LE,75,26,79,57;Keon Coleman,WR,75,22,87,0;Larry Ogunjobi,DT,75,31,74,99;Michael Hoecht,RE,75,27,84,55;O'Cyrus Torrence,RG,75,25,61,64;Ray Davis,HB,75,25,88,22;Cam Lewis,SS,74,28,90,39;Curtis Samuel,WR,74,29,90,1;Dorian Williams,WLB,74,24,89,42;Ty Johnson,HB,74,27,90,26;Tyler Bass,K,74,28,85,2;Damar Hamlin,FS,73,27,88,3;Gabe Davis,WR,73,26,89,13;Landon Jackson,RE,73,22,83,94;T.J. Sanders,DT,73,22,74,98;Darnell Savage,FS,72,28,92,25;Deone Walker,DT,72,21,61,96;Dorian Strong,CB,72,23,89,43;Dane Jackson,CB,71,28,88,23;Jordan Phillips,DT,71,32,72,52;DeWayne Carter,DT,70,24,73,90;Jordan Hancock,SS,70,22,91,37;Javon Solomon,LE,69,24,82,56;Joe Andreessen,MLB,69,25,84,44;Phidarian Mathis,DT,69,27,63,72;Sam Franklin Jr,FS,69,29,86,28;Tyrell Shavers,WR,69,26,91,14;Jackson Hawes,TE,68,24,78,85;Alec Anderson,RG,66,25,60,70;Sedrick Van Pran-Granger,C,66,23,66,62;Chase Lundt,RT,65,23,69,77;Mitchell Trubisky,QB,64,31,84,11;Ryan Van Demark,LT,64,27,63,74;Baylon Spector,SLB,63,26,86,54;Tylan Grable,LT,63,25,74,68;Keleki Latu,TE,62,23,76,83"],
+"Panthers":["#0085CA","Derrick Brown,DT,96,27,73,95;Jaycee Horn,CB,89,25,92,8;Damien Lewis,LG,85,28,68,68;Rico Dowdle,HB,84,27,88,5;Taylor Moton,RT,84,31,69,72;Tetairoa McMillan,WR,83,22,89,4;Chuba Hubbard,HB,81,26,92,30;Robert Hunt,RG,81,29,66,50;Tre'von Moehrig,FS,81,26,90,7;Ikem Ekwonu,LT,80,24,75,79;Mike Jackson,CB,79,28,91,2;Bryce Young,QB,78,24,87,9;A'Shawn Robinson,DT,77,30,65,94;Austin Corbett,LG,76,29,69,63;Brady Christensen,LT,76,28,74,70;D.J. Wonnum,RE,76,27,82,98;Jonathon Brooks,HB,76,22,90,24;Ryan Fitzgerald,K,76,25,72,10;Jalen Coker,WR,75,23,91,18;Nic Scourton,LE,75,21,82,11;Nick Scott,SS,75,30,90,21;Bobby Brown III,DT,74,25,72,97;Cade Mays,C,74,26,64,64;Isaiah Simmons,FS,74,27,91,27;Sam Martin,P,74,35,76,6;Tershawn Wharton,DT,74,27,79,99;Trevin Wallace,MLB,74,22,89,32;Xavier Legette,WR,74,24,93,17;Chau Smith-Wade,CB,73,22,88,26;Christian Rozeboom,WLB,73,28,82,56;Patrick Jones II,LE,72,26,77,91;Princely Umanmielen,RE,72,23,82,3;Tommy Tremble,TE,72,25,86,82;Akayleb Evans,CB,71,26,90,29;Damarri Mathis,CB,71,26,93,28;David Moore,WR,71,30,88,83;Trevis Gipson,RE,71,28,82,52;Trevor Etienne,HB,71,21,92,23;Andy Dalton,QB,70,37,74,14;Cam Jackson,DT,70,23,67,92;Ja'Tavion Sanders,TE,70,22,83,0;Krys Barnes,MLB,70,27,85,40;Lathan Ransom,SS,70,23,86,22;Yosh Nijman,RT,70,29,73,77;Claudin Cherelus,SLB,69,26,87,53;Mitchell Evans,TE,69,22,81,84;Robert Rochell,CB,69,27,92,33;Brycen Tremayne,WR,68,25,87,87;Jimmy Horn Jr,WR,67,22,91,15;LaBryan Ray,DT,67,27,68,93;Thomas Incoom,LE,66,26,84,48;Corey Thornton,CB,65,24,85,31;James Mitchell,TE,65,26,84,85;Chandler Zavala,RG,64,26,66,62;Jake Curhan,RG,64,27,57,74;Jared Harrison-Hunte,DT,64,25,77,75;Bam Martin-Scott,WLB,63,25,85,57;Maema Njongmeta,MLB,62,24,80,55;Nick Samac,C,62,24,65,60"],
+"Bears":["#C83803","Joe Thuney,LG,96,32,73,62;Jaylon Johnson,CB,90,26,90,1;Darnell Wright,RT,87,24,72,58;Jaquan Brisker,SS,86,26,89,9;Caleb Williams,QB,85,23,91,18;D'Andre Swift,HB,85,26,90,4;DJ Moore,WR,85,28,91,2;Colston Loveland,TE,84,21,86,84;Kevin Byard III,FS,84,32,88,31;Drew Dalman,C,82,26,70,52;Kyler Gordon,CB,82,25,88,6;Montez Sweat,LE,82,28,88,98;Rome Odunze,WR,82,23,91,15;Tremaine Edmunds,WLB,82,27,86,49;Grady Jarrett,DT,81,32,72,50;T.J. Edwards,MLB,81,29,85,53;Gervon Dexter Sr,DT,79,23,76,99;Luther Burden III,WR,79,21,92,10;Cairo Santos,K,78,33,72,8;Cole Kmet,TE,78,26,85,85;Jonah Jackson,RG,78,28,68,73;Kyle Monangai,HB,78,23,86,25;Tyrique Stevenson,CB,76,25,91,29;C.J. Gardner-Johnson,SS,75,27,90,35;Nahshon Wright,CB,75,27,89,26;Tory Taylor,P,75,28,81,19;Devin Duvernay,WR,74,27,93,12;Joe Tryon-Shoyinka,LE,74,26,82,93;Andrew Billings,DT,73,30,70,97;Austin Booker,LE,73,22,79,94;Braxton Jones,LT,73,26,73,70;Dayo Odeyingbo,RE,73,25,80,55;Olamide Zaccheaus,WR,73,28,90,14;Ozzy Trapilo,LT,73,23,65,75;Jonathan Owens,SS,72,30,91,36;Shemar Turner,DT,72,22,80,95;D'Marco Jackson,WLB,71,27,87,48;Durham Smythe,TE,71,30,81,81;Nick McCloud,CB,71,27,90,24;Roschon Johnson,HB,71,24,86,23;Jalen Reeves-Maybin,WLB,70,30,86,16;Jaylon Jones,CB,70,27,92,33;Ryan Bates,C,70,28,67,71;Zah Frazier,CB,70,24,94,35;Dominique Robinson,RE,69,27,80,90;Jahdae Walker,WR,69,23,91,20;Kiran Amegadjie,RG,69,23,70,72;Terell Smith,CB,69,26,92,32;Travis Homer,HB,69,27,91,21;Daniel Hardy,RE,68,26,83,92;Elijah Hicks,FS,68,25,88,22;Noah Sewell,SLB,68,23,82,44;Ruben Hyppolite II,MLB,67,23,88,47;Theo Benedet,LT,67,23,68,79;Jordan McFadden,RG,66,25,73,74;Luke Newman,LG,66,23,70,65;Josh Blackwell,CB,65,26,94,39;Chris Williams,DT,64,27,67,91;Case Keenum,QB,63,37,77,11"],
+"Bengals":["#FB4F14","Ja'Marr Chase,WR,99,25,95,1;Joe Burrow,QB,96,28,84,9;Trey Hendrickson,RE,90,30,84,91;Tee Higgins,WR,88,26,91,5;DJ Turner II,CB,83,24,96,20;Chase Brown,HB,82,25,93,30;Cam Taylor-Britt,CB,81,25,93,29;Evan McPherson,K,81,26,75,2;Geno Stone,FS,79,26,87,22;Dax Hill,CB,78,24,93,23;Mike Gesicki,TE,77,29,84,88;Amarius Mims,RT,76,22,70,71;B.J. Hill,DT,76,29,73,92;Jordan Battle,SS,76,24,88,27;Orlando Brown Jr,LT,76,29,59,75;Samaje Perine,HB,76,29,86,34;Ted Karras,C,76,32,69,64;Ryan Rehkow,P,75,26,68,8;Dalton Risner,RG,74,30,69,66;Joseph Ossai,RE,74,25,84,58;Kris Jenkins Jr,DT,74,23,75,90;Shemar Stewart,LE,74,21,86,97;Andrei Iosivas,WR,73,25,92,80;Demetrius Knight Jr,WLB,73,25,86,44;Joe Flacco,QB,73,40,75,16;Myles Murphy,LE,73,23,88,99;Noah Fant,TE,73,27,87,86;Dylan Fairchild,LG,72,22,71,63;Lucas Patrick,LG,72,32,70,62;Cam Sample,LE,71,25,77,96;Josh Newton,CB,71,24,89,28;Mitchell Tinsley,WR,71,25,86,82;Tahj Brooks,HB,71,23,88,25;Charlie Jones,WR,70,26,90,15;Isaiah Foskey,RE,70,24,86,51;T.J. Slaton,DT,70,27,69,98;Barrett Carter,MLB,69,22,85,49;Cedric Johnson,RE,69,22,85,52;Jordan Jefferson,DT,69,23,69,94;Marco Wilson,CB,69,26,91,24;McKinnley Jackson,DT,69,23,64,93;Oren Burks,WLB,69,30,87,42;Cody Ford,RT,68,28,67,61;Drew Sample,TE,68,29,82,89;Erick All Jr,TE,68,24,86,83;Tanner Hudson,TE,68,30,82,87;DJ Ivey,CB,67,25,90,38;Jake Browning,QB,67,29,79,6;Jalen Davis,CB,67,29,88,35;Jalen Rivers,RG,67,22,63,74;Brian Asamoah II,MLB,66,25,87,53;Daijahn Anthony,SS,66,24,88,33;Ke'Shawn Williams,WR,66,23,89,12;Tycen Anderson,SS,65,26,92,26;Joe Giles-Harris,SLB,64,28,83,43;PJ Jules,FS,63,27,89,37;Matt Lee,C,62,24,71,65;Shaka Heyward,WLB,62,25,88,50;Cam Grandy,TE,61,24,76,85"],
+"Browns":["#FF3C00","Myles Garrett,RE,99,29,87,95;Denzel Ward,CB,93,28,93,21;Devin Bush,WLB,86,27,87,30;Joel Bitonio,LG,86,33,73,75;Jeremiah Owusu-Koramoah,WLB,83,25,88,6;Carson Schwesinger,MLB,82,22,87,49;Grant Delpit,SS,82,26,89,9;David Njoku,TE,81,29,86,85;Jerry Jeudy,WR,81,26,91,3;Quinshon Judkins,HB,81,21,90,10;Corey Bojorquez,P,80,29,70,13;Harold Fannin Jr,TE,80,21,82,44;Mason Graham,DT,80,21,78,94;Tyson Campbell,CB,79,25,92,7;Wyatt Teller,RG,79,30,72,77;Jack Conklin,RT,78,31,69,78;Maliek Collins,DT,77,30,70,96;Rayshawn Jenkins,SS,77,31,88,5;Shelby Harris,DT,77,34,75,93;Teven Jenkins,LG,77,27,74,74;Jerome Baker,SLB,76,28,89,17;Ronnie Hickman,FS,76,23,86,33;Dylan Sampson,HB,75,20,92,22;Jerome Ford,HB,75,25,91,34;Martin Emerson Jr,CB,75,24,89,1;Cedric Tillman,WR,74,25,88,19;Cam Robinson,LT,73,29,69,68;Alex Wright,LE,72,24,79,91;Ethan Pocic,C,72,30,71,55;Isaiah McGuire,LE,72,24,79,57;Mike Hall Jr,DT,72,22,81,51;Andre Szmyt,K,71,26,73,25;Cornelius Lucas III,LT,71,34,69,71;DeAndre Carter,WR,71,32,88,2;Cameron Thomas,RE,70,25,78,99;Mohamoud Diabate,WLB,70,24,87,43;Zak Zinter,RG,70,24,63,70;Deshaun Watson,QB,69,29,84,4;Isaiah Bond,WR,69,21,93,16;Jamari Thrash,WR,69,24,90,80;Kendrick Green,RG,69,26,75,52;Malachi Corley,WR,69,23,88,83;Raheim Sanders,HB,69,22,90,35;Shedeur Sanders,QB,69,23,78,12;Dawand Jones,LT,68,24,61,79;Myles Harden,CB,68,23,89,26;Nathaniel Watson,SLB,68,25,84,40;Dillon Gabriel,QB,67,24,83,8;KT Leveston,RT,67,25,60,72;Winston Reid,WLB,67,26,85,59;Gage Larvadain,WR,66,22,90,84;Luke Wypler,C,66,24,68,56;Sam Webb,CB,66,27,90,27;Adin Huntington,DT,65,23,82,98;Trayveon Williams,HB,65,27,89,38;Brenden Bates,TE,64,25,82,82;D'Angelo Ross,CB,64,28,92,20;Dom Jones,CB,63,25,87,37;Easton Mascarenas-Arnold,MLB,63,22,86,42;Blake Whiteheart,TE,62,25,82,86;Chris Edmonds,SS,62,24,90,41;Donovan McMillon,FS,62,23,90,31;Tre Avery,CB,62,28,91,28;Jeremiah Byers,RT,61,24,65,63;Sam Kamara,DT,61,27,72,92"],
+"Cowboys":["#003594","CeeDee Lamb,WR,93,26,90,88;Dak Prescott,QB,91,32,84,4;Quinnen Williams,DT,90,27,84,92;George Pickens,WR,88,24,91,3;Tyler Smith,LG,88,24,72,73;Brandon Aubrey,K,87,30,82,17;Javonte Williams,HB,85,25,88,33;DaRon Bland,CB,82,26,90,26;Jake Ferguson,TE,82,26,81,87;Tyler Booker,RG,82,21,60,52;Jadeveon Clowney,LE,80,32,82,42;Bryan Anger,P,79,36,73,5;Kenny Clark,DT,78,29,72,95;Malik Hooker,FS,78,29,88,28;DeMarvion Overshown,WLB,77,25,88,0;Osa Odighizuwa,DT,77,27,77,97;KaVontae Turpin,WR,76,29,97,9;Ryan Flournoy,WR,76,25,92,19;Cooper Beebe,C,75,24,71,56;Dante Fowler Jr,LE,75,31,82,13;Donovan Ezeiruaku,RE,75,21,83,41;Terence Steele,RT,75,28,75,78;Donovan Wilson,SS,74,30,87,6;Jalen Tolbert,WR,74,26,91,1;Logan Wilson,MLB,74,29,84,55;Miles Sanders,HB,74,28,90,24;Jaydon Blue,HB,73,21,93,23;Malik Davis,HB,73,26,87,43;Payton Turner,RE,73,26,80,98;Sam Williams,RE,73,26,88,54;Tyler Guyton,LT,73,23,67,60;Caelen Carson,CB,72,23,88,21;Hunter Luepke,FB,72,25,86,40;James Houston IV,LE,72,26,84,53;Markquese Bell,SS,72,26,92,14;Solomon Thomas,DT,72,30,82,90;Jack Sanborn,MLB,71,25,80,57;Jonathan Mingo,WR,71,24,90,81;Marist Liufau,WLB,71,24,84,35;Shavon Revel Jr,CB,71,24,93,34;Robert Jones,LG,70,26,65,65;Shemar James,SLB,70,21,83,50;Josh Butler,CB,69,28,91,31;Luke Schoonmaker,TE,69,26,85,86;T.J. Bass,RG,69,26,56,66;Joe Milton,QB,68,25,86,10;Phil Mafah,HB,68,22,88,37;Trikweze Bridges,CB,68,24,91,25;Brock Hoffman,C,67,26,56,67;C.J. Goodwin,CB,67,35,93,29;Perrion Winfrey,DT,67,25,76,99;Juanyeh Thomas,SS,66,25,87,2;Kenneth Murray Jr,MLB,66,26,87,59;Nathan Thomas,LT,66,24,66,71;Trevor Keegan,LG,66,25,64,76;Ajani Cornelius,RT,65,23,64,69;Alijah Clark,FS,65,22,89,38;Brevyn Spann-Ford,TE,65,25,80,89;Jay Toia,DT,65,22,65,93;Reddy Steward,CB,65,24,88,27;Hakeem Adeniji,RT,63,27,66,75"],
+"Broncos":["#FB4F14","Patrick Surtain II,CB,97,25,94,2;Garett Bolles,LT,96,33,75,72;Quinn Meinerz,RG,95,26,76,77;Nik Bonitto,RE,91,25,88,15;Dre Greenlaw,MLB,88,28,85,57;Talanoa Hufanga,SS,88,25,89,9;Courtland Sutton,WR,87,29,90,14;Zach Allen,DT,87,28,76,99;Alex Singleton,WLB,84,31,85,49;Brandon Jones,FS,83,27,89,22;J.K. Dobbins,HB,83,26,90,27;Jonathon Cooper,LE,83,27,85,0;Mike McGlinchey,RT,82,30,71,69;Bo Nix,QB,81,25,88,10;John Franklin-Myers,DT,80,28,78,98;Jeremy Crawshaw,P,79,24,77,16;RJ Harvey,HB,79,24,92,12;Troy Franklin,WR,79,22,92,11;Evan Engram,TE,78,30,85,1;Luke Wattenberg,C,78,27,66,60;Marvin Mims Jr,WR,78,23,92,19;Wil Lutz,K,78,31,70,3;D.J. Jones,DT,77,30,73,93;Riley Moss,CB,77,25,91,21;Ja'Quan McMillian,CB,76,25,88,29;Ben Powers,LG,75,28,70,74;Jahdae Barron,CB,75,23,93,23;Justin Strnad,WLB,74,29,88,40;P.J. Locke,SS,74,28,89,6;Jonah Elliss,LE,73,22,81,52;Kris Abrams-Draine,CB,73,23,91,31;Malcolm Roach,DT,72,27,74,97;Pat Bryant II,WR,72,22,89,13;Adam Trautman,TE,71,28,82,82;Drew Sanders,MLB,71,23,84,41;Jaleel McLaughlin,HB,71,24,92,38;Alex Palczewski,LG,70,26,63,63;Dondrea Tillman,RE,70,27,73,92;Sai'vion Jones,DT,70,22,81,95;Sam Mustipher,LG,70,29,61,61;Adam Prentice,FB,69,28,77,46;Eyioma Uwazurike,DT,69,27,62,96;Lil'Jordan Humphrey,WR,69,27,84,17;Que Robinson,RE,69,24,84,51;Tyler Badie,HB,69,25,90,28;Alex Forsyth,C,67,26,66,54;Matt Peart,LT,67,28,69,79;Michael Burton,FB,67,33,80,20;JL Skinner,SS,66,24,89,34;Nick Gargiulo,RG,66,25,64,66;Reese Taylor,CB,66,26,90,35;Devon Key,FS,65,27,86,26;Jordan Jackson,DT,65,27,74,94;Frank Crum,LT,64,25,74,73;Lucas Krull,TE,64,27,84,85;Jarrett Stidham,QB,63,29,78,8;Jordan Turner,MLB,63,23,81,55;Karene Reid,MLB,62,25,83,47;Nate Adkins,TE,62,26,77,45;Johnny Walker Jr,WLB,60,23,78,59"],
+"Lions":["#0076B6","Jahmyr Gibbs,HB,98,23,98,0;Penei Sewell,RT,98,24,73,58;Amon-Ra St. Brown,WR,96,25,90,14;Aidan Hutchinson,LE,93,25,82,97;Brian Branch,SS,91,23,88,32;Kerby Joseph,FS,91,24,88,31;Jared Goff,QB,88,30,74,16;D.J. Reed Jr,CB,87,28,90,4;Jack Campbell,MLB,87,25,85,46;Sam LaPorta,TE,87,24,86,87;Jameson Williams,WR,85,24,98,1;D.J. Reader,DT,84,31,70,98;David Montgomery,HB,84,28,87,5;Taylor Decker,LT,84,31,69,68;Alim McNeill,DT,83,25,75,54;Alex Anzalone,WLB,80,30,86,34;Jack Fox,P,79,29,87,3;Amik Robertson,CB,77,27,88,21;Graham Glasgow,C,77,33,64,60;Al-Quadin Muhammad,RE,76,30,80,96;Jake Bates,K,76,26,72,39;Tate Ratledge,RG,76,24,73,69;Terrion Arnold,CB,76,23,90,6;Tyleik Williams,DT,76,22,75,91;Kalif Raymond,WR,75,31,91,11;Arthur Maulet,CB,74,32,89,27;Derrick Barnes,SLB,74,26,86,55;Josh Paschal,LE,74,25,80,93;Levi Onwuzurike,DT,74,27,79,78;Malcolm Rodriguez,SLB,74,26,86,44;Marcus Davenport,RE,74,28,84,92;Avonte Maddox,FS,73,29,89,29;Isaac TeSlaa,WR,73,23,91,18;Jalen Mills,FS,73,31,86,13;Christian Mahogany,LG,72,24,68,73;Ennis Rakestraw Jr,CB,72,23,89,9;Rock Ya-Sin,CB,72,29,90,23;Roy Lopez,DT,72,28,66,51;Mekhi Wingo,DT,70,22,77,94;Thomas Harper,SS,70,24,89,12;Zach Cunningham,MLB,70,30,84,52;Miles Frazier,LG,69,23,64,71;Sione Vaki,HB,68,24,89,33;Tom Kennedy,WR,68,29,86,85;Tyler Lacy,DT,68,25,69,78;Dominic Lovett,WR,67,22,92,19;Giovanni Manu,LT,67,24,70,59;Trystan Colon,C,67,27,71,57;Brock Wright,TE,66,26,86,89;Daniel Thomas,SS,66,27,87,2;Jacob Saylors,HB,66,25,88,25;Nick Whiteside,CB,66,25,89,38;Shane Zylstra,TE,66,28,82,84;Tyrus Wheat,RE,65,25,84,99;Anthony Firkser,TE,64,30,80,86;Grant Stuard,WLB,64,26,84,15;Khalil Dorsey,CB,64,27,92,30;Michael Niese,RG,64,27,71,62;Trevor Nowaske,WLB,64,26,88,53;Colby Sorsdal,RT,63,25,67,75;Jamarco Jones,RT,63,29,58,72;Kayode Awosika,LG,63,26,65,74;Dan Skipper,RT,61,30,70,70;Kyle Allen,QB,60,29,81,8"],
+"Packers":["#203731","Micah Parsons,RE,98,26,90,1;Xavier McKinney,SS,92,26,88,29;Josh Jacobs,HB,91,27,90,8;Jordan Love,QB,87,26,84,10;Zach Tom,RT,87,26,74,50;Elgton Jenkins,C,86,29,74,74;Tucker Kraft,TE,85,24,88,85;Rashan Gary,LE,84,27,85,52;Edgerrin Cooper,MLB,80,23,89,56;Jayden Reed,WR,80,25,94,11;Nate Hobbs,CB,80,26,91,21;Quay Walker,WLB,80,25,88,7;Christian Watson,WR,79,26,97,9;Rasheed Walker,LT,79,25,64,63;Romeo Doubs,WR,79,25,92,87;Devonte Wyatt,DT,78,27,80,95;Isaiah McDuffie,SLB,78,26,87,58;Keisean Nixon,CB,78,28,93,25;Matthew Golden,WR,78,22,95,0;Carrington Valentine,CB,77,23,91,24;Dontayvion Wicks,WR,76,24,89,13;Evan Williams,FS,76,24,86,33;Lukas Van Ness,LE,76,24,86,90;Trevon Diggs,CB,76,27,91,28;Brandon McManus,K,75,34,76,17;Javon Bullard,SS,75,22,89,20;Daniel Whelan,P,74,26,78,19;Jordan Morgan,RG,74,24,71,77;Aaron Banks,LG,73,27,60,65;Emanuel Wilson,HB,73,26,90,23;Bo Melton,WR,72,26,94,16;Kingsley Enagbare,RE,72,25,77,55;MarShawn Lloyd,HB,72,24,90,32;Malik Willis,QB,71,26,90,2;Sean Rhyan,LG,71,26,64,75;Anthony Belton,LT,70,24,64,71;Barryn Sorrell,RE,70,22,83,99;Collin Oliver,RE,70,22,87,45;Karl Brooks,DT,70,25,70,94;Luke Musgrave,TE,70,24,89,88;Savion Williams,WR,70,23,90,83;Colby Wooden,DT,69,24,79,96;Josh Whyle,TE,69,25,83,81;Chris Brooks,HB,68,25,89,30;Darian Kinnard,RT,68,25,62,70;Jakobie Keeney-James,WR,68,25,91,84;Jordon Riley,DT,68,27,63,97;Kamal Hadden,CB,67,24,87,36;Kitan Oladapo,SS,67,24,86,27;Shemar Bartholomew,CB,67,25,91,34;Brenton Cox,LE,66,25,78,57;Desmond Ridder,QB,66,26,88,18;Jaylin Simpson,FS,66,25,90,38;Nazir Stackhouse,DT,66,23,67,93;Nick Niemann,MLB,66,27,88,31;Ty'Ron Hopper,WLB,66,24,83,59;Warren Brinson,DT,66,23,70,91;Zayne Anderson,FS,66,28,90,39;Jacob Monk,C,65,24,69,62;Donovan Jennings,RG,64,25,72,67;Travis Glover,RT,64,25,63,79;Arron Mosby,RE,63,26,82,53;John FitzPatrick,TE,63,25,80,86;John Williams,RG,63,23,67,73;Johnathan Baldwin,FS,63,23,89,37;Jonathan Ford,DT,63,26,57,64;Kristian Welch,MLB,63,27,85,54;Lecitus Smith,C,60,27,66,68"],
+"Texans":["#A71930","Will Anderson Jr,LE,94,23,87,51;Danielle Hunter,RE,92,30,88,55;Derek Stingley Jr,CB,92,24,93,24;Nico Collins,WR,89,26,94,12;Joe Mixon,HB,88,29,92,28;Kamari Lassiter,CB,87,22,92,4;Jalen Pitre,CB,86,26,90,5;Dalton Schultz,TE,84,29,82,86;Azeez Al-Shaair,MLB,83,28,86,0;Jimmie Ward,SS,81,34,89,20;Ka'imi Fairbairn,K,81,31,79,15;Sheldon Rankins,DT,81,31,72,90;Calen Bullock,FS,80,22,90,2;Nick Chubb,HB,80,29,88,21;Tytus Howard,RT,80,29,73,71;Tank Dell,WR,79,25,92,3;Trent Brown,RT,79,32,69,77;Woody Marks,HB,79,24,88,27;Christian Kirk,WR,78,28,90,13;Tommy Townsend,P,78,28,81,6;C.J. Stroud,QB,77,23,82,7;Ed Ingram,RG,77,26,72,69;Jayden Higgins,WR,77,22,89,81;Denico Autry,RE,76,35,74,96;E.J. Speed,WLB,75,30,88,45;Folorunso Fatukasi,DT,75,30,66,91;Henry To'oTo'o,SLB,75,24,85,39;Tommy Togiai,DT,75,25,71,72;Derek Barnett,LE,73,29,77,95;Jaylin Noel,WR,73,22,93,14;Justin Watson,WR,73,30,90,84;Tim Settle Jr,DT,73,28,69,98;Xavier Hutchinson,WR,73,25,88,19;Braxton Berrios,WR,72,29,90,17;Christian Harris,WLB,72,24,90,48;Ja'Marcus Ingram,CB,72,27,90,42;Mario Edwards Jr,DT,72,31,75,97;Aireontae Ersery,LT,71,23,72,79;Damone Clark,WLB,71,25,90,31;Jake Andrews,C,71,25,67,60;Jawhar Jordan,HB,71,26,88,26;Blake Fisher,RT,70,22,66,57;Harrison Bryant,TE,70,27,83,88;Jarrett Patterson,C,70,26,61,54;Jaylin Smith,CB,70,21,91,22;Juice Scruggs,RG,70,25,65,70;M.J. Stewart Jr,SS,70,29,88,29;Brevin Jordan,TE,68,25,86,9;British Brooks,FB,68,25,86,44;Dare Ogunbowale,HB,68,31,88,33;Jaylen Reed,FS,68,22,89,23;Myles Bryant,SS,68,27,91,25;Tremon Smith,CB,68,29,91,11;Cade Stover,TE,67,25,84,87;Dylan Horton,LE,67,25,81,92;Jarrett Kingston,LG,67,25,72,63;Kurt Hinish,DT,67,26,70,93;Davis Mills,QB,66,26,78,10;Jamal Hill,MLB,66,24,91,56;Kyonte Hamilton,DT,66,22,72,58;Naquan Jones,DT,65,27,61,91;Ajani Carter,CB,64,25,88,34;Alijah Huzzie,CB,64,24,93,36;Jake Hansen,WLB,64,27,81,35;Graham Mertz,QB,60,24,77,18"],
+"Colts":["#002C5F","Jonathan Taylor,HB,96,26,94,28;Quenton Nelson,LG,94,29,70,56;DeForest Buckner,DT,91,31,76,99;Sauce Gardner,CB,90,25,93,1;Charvarius Ward Sr,CB,88,29,90,7;Bernhard Raimann,LT,86,27,71,79;Kenny Moore II,CB,86,30,91,23;Grover Stewart,DT,85,31,73,90;Alec Pierce,WR,84,25,93,14;Camryn Bynum,SS,84,27,86,0;Michael Pittman Jr,WR,84,27,89,11;Rigoberto Sanchez,P,83,30,70,8;Tanor Bortolini,C,83,23,74,60;Tyler Warren,TE,83,23,84,84;Braden Smith,RT,82,29,67,72;Germaine Pratt,WLB,81,29,88,53;Laiatu Latu,LE,81,24,84,97;Nick Cross,FS,81,23,92,20;Josh Downs,WR,80,24,90,2;Zaire Franklin,MLB,79,29,84,44;Daniel Jones,QB,78,28,87,17;Kwity Paye,RE,77,26,84,51;Mekhi Blackmon,CB,76,26,90,29;Philip Rivers,QB,76,43,59,17;Samson Ebukam,LE,76,30,84,52;Matt Goncalves,RG,75,24,66,71;JT Tuimoloau,RE,74,22,80,91;Spencer Shrader,K,74,26,67,3;Blake Grupe,K,73,26,76,10;Jaylon Jones,CB,73,23,89,40;Tyquan Lewis,LE,73,30,80,94;Ameer Abdullah,HB,72,32,89,26;Ashton Dulin,WR,72,28,92,16;Chris Wormley,DT,72,31,76,96;Neville Gallimore,DT,72,28,80,92;Justin Walley,CB,71,22,92,27;Mo Alie-Cox,TE,71,31,82,81;Cameron Mitchell,CB,70,23,90,43;DJ Giddens,HB,70,22,91,21;Jaylon Carlies,WLB,70,23,89,57;Rodney Thomas II,SS,70,26,89,25;Adetomiwa Adebawore,DT,69,24,89,95;Anthony Gould,WR,69,24,94,6;Anthony Richardson Sr,QB,69,23,91,5;George Odum,SS,69,31,90,39;Salvon Ahmed,HB,69,26,91,36;Daniel Scott,FS,68,26,91,32;Jacob Phillips,SLB,68,26,82,54;Jalen Travis,LT,68,23,68,75;Laquon Treadwell,WR,68,30,85,13;Tyler Goodson,HB,68,24,92,31;Johnathan Edwards,CB,67,23,92,35;Riley Leonard,QB,67,22,86,15;Austin Ajiake,WLB,66,25,86,58;Chris Lammons,CB,66,29,90,38;Danny Pinter,C,66,29,74,63;Drew Ogletree,TE,66,27,82,85;Blake Freeland,LT,65,24,73,73;Buddy Johnson,MLB,65,26,86,59;Dalton Tucker,LG,65,25,66,68;Eric Johnson II,DT,65,27,77,98;Hunter Wohler,FS,65,22,87,30;John Bullock,WLB,65,24,85,57;Segun Olubi,MLB,65,25,90,50;Will Mallory,TE,65,26,87,86;D.J. Montgomery,WR,64,28,90,2;Reuben Lowery III,FS,63,23,91,36;Luke Tenuta,RT,62,26,59,67"],
+"Jaguars":["#006778","Josh Hines-Allen,RE,88,28,88,41;Travis Etienne Jr,HB,87,26,93,1;Devin Lloyd,MLB,86,26,86,0;Foyesade Oluokun,WLB,85,30,87,23;Jakobi Meyers,WR,82,28,89,3;Travis Hunter,WR,82,22,93,12;Trevor Lawrence,QB,82,25,88,16;Brian Thomas Jr,WR,81,22,97,7;Jourdan Lewis,CB,81,30,89,2;Cam Little,K,80,22,74,39;Ezra Cleveland,LG,80,27,76,76;Parker Washington,WR,80,23,89,11;Travon Walker,LE,80,24,88,44;Greg Newsome II,CB,79,25,92,6;Jarrian Jones,CB,78,24,93,22;Anton Harrison,RT,77,23,73,77;Brenton Strange,TE,77,24,83,85;Walker Little,LT,77,26,62,72;Andrew Wingard,FS,76,28,86,42;Antonio Johnson,SS,76,23,88,26;Arik Armstead,DT,76,31,74,91;Bhayshul Tuten,HB,76,23,95,33;Logan Cooke,P,76,30,72,9;Tim Patrick,WR,76,31,88,17;Dyami Brown,WR,75,25,93,5;Dennis Gardeck,SLB,74,31,87,47;Emmanuel Ogbah,RE,74,31,82,90;Eric Murray,SS,74,31,86,29;Montaric Brown,CB,74,26,87,30;Robert Hainsey,C,74,27,64,73;Caleb Ransaw,FS,73,22,95,27;DaVon Hamilton,DT,73,28,70,52;Patrick Mekari,RG,73,28,72,65;Austin Johnson,DT,72,31,72,99;Cole Van Lanen,LT,72,27,68,70;Dawuane Smoot,RE,71,30,79,98;LeQuint Allen,HB,71,21,89,36;Wyatt Milum,LG,71,22,63,64;Maason Smith,DT,69,22,72,94;Ventrell Miller,MLB,69,26,83,51;Chuma Edoga,RG,68,28,70,55;DeeJay Dallas,HB,68,26,88,20;Jack Kiser,WLB,68,24,83,54;Johnny Mundt,TE,68,30,84,86;Christian Braswell,CB,66,25,90,21;Rayuan Lane III,SS,66,22,87,25;Danny Striggow,RE,65,23,78,92;Hunter Long,TE,65,27,81,84;Keith Taylor,CB,65,26,88,32;Matt Dickerson,DT,65,29,72,93;BJ Green II,LE,64,22,82,95;Jalen McLeod,MLB,64,23,81,35;Quintin Morris,TE,64,26,83,80;Yasir Abdullah,SLB,64,25,90,56;Jonah Monheim,C,63,23,72,60;Branson Combs,MLB,62,25,83,50;Nick Mullens,QB,61,30,74,14"],
+"Chiefs":["#E31837","Creed Humphrey,C,95,27,74,52;Chris Jones,DT,94,31,73,95;Trent McDuffie,CB,94,24,92,22;Patrick Mahomes,QB,92,29,85,15;Trey Smith,RG,91,26,71,65;Travis Kelce,TE,90,35,82,87;Drue Tranquill,WLB,89,30,88,23;Rashee Rice,WR,85,25,90,4;Leo Chenal,SLB,84,24,88,54;George Karlaftis,LE,82,24,80,56;Harrison Butker,K,81,30,74,7;Josh Simmons,LT,81,22,78,71;Nick Bolton,MLB,81,25,87,32;Bryan Cook,FS,80,25,90,6;Jaylen Watson,CB,79,26,93,35;Kareem Hunt,HB,79,30,86,29;Xavier Worthy,WR,79,22,99,1;Marquise Brown,WR,78,28,94,5;JuJu Smith-Schuster,WR,77,28,87,9;Kristian Fulton,CB,77,26,89,8;Mike Danna,RE,77,27,81,51;Chamarri Conner,SS,76,25,89,27;Isiah Pacheco,HB,76,25,93,10;Charles Omenihu,LE,75,28,74,90;Jawaan Taylor,RT,75,27,67,74;Kingsley Suamataia,LG,75,22,71,76;Matt Araiza,P,75,25,83,14;Tyquan Thornton,WR,75,25,92,80;Dameon Pierce,HB,74,25,90,25;Joshua Williams,CB,74,25,89,2;Noah Gray,TE,74,26,85,83;Ashton Gillotte,RE,73,22,84,97;Brashard Smith,HB,73,22,93,24;Derrick Nnadi,DT,73,29,73,92;Jaden Hicks,SS,73,23,89,21;Nazeeh Johnson,CB,73,27,93,13;Nohl Williams,CB,73,22,89,20;Felix Anudike-Uzomah,RE,72,23,81,91;Jalen Royals,WR,71,22,92,11;Jaylon Moore,RT,71,27,63,77;Jerry Tillery,DT,71,28,75,99;Mike Pennel,DT,71,34,67,69;Omarr Norman-Lott,DT,71,23,67,55;Gardner Minshew,QB,70,29,80,17;Mike Edwards,FS,70,29,88,34;Jared Wiley,TE,69,24,85,12;Wanya Morris,LT,69,24,69,64;Zacch Pickens,DT,68,25,76,93;Chris Roland-Wallace,CB,67,23,86,30;Jeffrey Bassa,WLB,67,22,85,31;Nikko Remigio,WR,67,25,87,81;Robert Tonyan,TE,67,31,86,85;Hunter Nourzad,C,66,25,67,60;Janarius Robinson,LE,66,27,81,98;Deon Bush,SS,65,32,88,26;Mike Caliendo,RG,65,27,60,66;C.J. Hanson,RG,64,24,72,61;Cooper McDonald,MLB,64,24,84,59;Kevin Knowles,CB,64,22,90,38;Jake Briningstool,TE,63,22,81,88;Ethan Driskell,RT,62,25,64,75;Jack Cochrane,SLB,62,26,84,43;Esa Pole,LT,61,24,63,79"],
+"Raiders":["#A5ACAF","Maxx Crosby,LE,97,28,86,98;Brock Bowers,TE,93,22,90,89;Kolton Miller,LT,91,29,74,74;Ashton Jeanty,HB,83,21,90,2;Jeremy Chinn,SS,82,27,91,11;A.J. Cole,P,79,29,72,6;Jackson Powers-Johnson,RG,78,22,70,58;Tre Tucker,WR,78,24,95,1;Daniel Carlson,K,77,30,71,8;Eric Stokes,CB,77,26,95,22;Elandon Roberts,MLB,76,31,85,52;Dylan Parham,LG,75,26,75,66;Raheem Mostert,HB,75,33,91,31;Tyler Lockett,WR,75,32,88,17;Darien Porter,CB,74,24,96,26;Adam Butler,DT,73,31,70,69;Devin White,WLB,73,27,88,45;Jamal Adams,WLB,73,29,87,33;Lonnie Johnson Jr,FS,73,29,92,32;Malcolm Koonce,RE,73,27,79,51;Tyree Wilson,RE,73,25,81,9;Zamir White,HB,73,25,91,3;Darnay Holmes,CB,72,27,90,30;DJ Glaze,RT,72,23,65,71;Jack Bech,WR,72,22,89,18;Jordan Meredith,C,72,27,68,61;Kyu Blu Kelly,CB,72,24,88,36;Michael Mayer,TE,72,24,82,87;Alex Cappa,RG,71,30,68,65;Isaiah Pola-Mao,FS,71,26,89,20;Brennan Jackson,LE,70,24,83,54;Caleb Rogers,RG,70,23,69,76;Charles Grant,LT,70,23,75,60;Charles Snowden,LE,70,27,83,49;Geno Smith,QB,70,34,85,7;Tommy Eichenberg,WLB,70,24,78,44;Decamerion Richardson,CB,69,24,94,25;Ian Thomas,TE,69,29,82,80;Jonah Laulu,DT,69,25,74,96;Dont'e Thornton Jr,WR,68,22,96,10;Dylan Laube,HB,68,25,88,23;Tonka Hemingway,DT,68,23,72,97;Aidan O'Connell,QB,67,27,75,12;JJ Pegues,DT,67,23,67,92;Thomas Booker IV,DT,67,25,74,99;Kenny Pickett,QB,66,27,81,15;Brodric Martin,DT,65,26,61,93;Chigozie Anusiem,CB,65,24,91,29;Alex Bachman,WR,64,29,88,81;Stone Forsythe,RT,64,27,67,70;Greedy Vance Jr,CB,63,23,87,41;Jon Rhattigan,MLB,63,26,80,59;Atonio Mafi,RG,62,24,55,56;Cody Lindenberg,MLB,62,23,82,55;Tristin McCollum,FS,62,26,90,27"],
+"Chargers":["#0080C6","Derwin James Jr,SS,93,29,90,3;Rashawn Slater,LT,92,26,75,70;Justin Herbert,QB,89,27,86,10;Khalil Mack,RE,86,34,85,52;Joe Alt,LT,85,22,71,76;Keenan Allen,WR,83,33,88,13;Ladd McConkey,WR,83,23,92,15;Cameron Dicker,K,82,25,76,11;Daiyan Henley,WLB,82,25,88,0;Donte Jackson,CB,82,29,93,26;Omarion Hampton,HB,81,22,90,8;JK Scott,P,80,28,75,16;Najee Harris,HB,80,27,88,22;Odafe Oweh,LE,80,26,89,98;Quentin Johnston,WR,80,23,93,1;Tarheeb Still,CB,80,23,89,29;Tony Jefferson,SS,80,33,87,23;Elijah Molden,FS,79,26,90,2;Tuli Tuipulotu,LE,78,22,77,45;Zion Johnson,LG,78,25,66,77;Benjamin St-Juste,CB,77,27,91,24;Kimani Vidal,HB,77,24,90,30;Teair Tart,DT,77,28,71,90;Denzel Perryman,MLB,76,32,82,6;Oronde Gadsden,TE,75,22,86,86;Da'Shawn Hand,DT,74,29,76,91;Cam Hart,CB,73,24,91,20;Justin Eboigbe,DT,73,24,66,92;Mekhi Becton Sr,RG,73,26,71,73;Tre' Harris,WR,73,23,88,9;Will Dissly,TE,73,29,82,89;Bud Dupree,RE,72,32,83,48;Tyler Conklin,TE,72,30,83,83;Bradley Bozeman,C,71,30,71,75;Jamaree Caldwell,DT,71,25,67,99;Junior Colson,MLB,71,22,86,25;Troy Dye,MLB,71,28,87,43;Derius Davis,WR,70,24,94,12;Jamaree Salyer,RG,70,25,63,68;KeAndre Lambert-Smith,WR,70,23,93,84;R.J. Mickens,FS,70,24,89,27;Trevor Penning,RT,70,26,76,64;Andre James,C,69,28,67,78;Hassan Haskins,HB,69,25,89,28;Kyle Kennard,LE,69,23,81,54;Scott Matlock,FB,69,25,74,44;Trey Pipkins III,RT,69,28,69,79;Deane Leonard,CB,68,25,93,33;Otito Ogbonnia,DT,68,25,62,93;Jaret Patterson,HB,67,25,85,32;Del'Shawn Phillips,SLB,65,28,87,53;Austin Deculus,RT,64,26,70,74;Bobby Hart,LT,64,31,49,66;Kendall Williamson,FS,64,25,91,40;Marlowe Wax,WLB,64,22,85,58;Nikko Reed,CB,64,22,90,46;Trey Lance,QB,63,25,87,5;Eric Rogers,CB,62,23,86,39"],
+"Rams":["#003594","Matthew Stafford,QB,98,37,78,9;Puka Nacua,WR,97,24,93,12;Davante Adams,WR,90,32,89,17;Kyren Williams,HB,89,25,87,23;Jared Verse,LE,88,24,89,8;Kevin Dotson,RG,87,28,70,69;Nate Landman,MLB,86,26,79,53;Kobie Turner,DT,85,26,74,91;Byron Young,RE,84,27,92,0;Kamren Curl,SS,84,26,88,3;Alaric Jackson,LT,83,27,63,77;Poona Ford,DT,82,29,71,95;Quentin Lake,SS,82,26,88,37;Cobie Durant,CB,81,27,93,14;Kamren Kinchens,FS,81,22,86,26;Braden Fiske,DT,80,25,80,55;Ethan Evans,P,80,24,68,42;Rob Havenstein,RT,79,33,68,79;Steve Avila,LG,79,25,65,73;Blake Corum,HB,78,24,93,22;Coleman Shelton,C,78,30,73,65;Omar Speights,WLB,78,24,84,48;Roger McCreary,CB,78,25,89,25;Ahkello Witherspoon,CB,77,30,89,4;Darious Williams,CB,76,32,90,31;Derion Kendrick,CB,75,25,85,21;Emmanuel Forbes Jr,CB,75,24,94,1;Tutu Atwell,WR,75,25,93,5;Josaiah Stewart,LE,74,22,82,10;Tyler Davis,DT,74,24,72,90;Colby Parkinson,TE,73,26,82,84;Tyler Higbee,TE,73,32,81,89;Warren McClendon Jr,RT,73,24,69,71;D.J. Humphries,LT,72,31,65,72;Jarquez Hunter,HB,72,22,91,27;Jordan Whittington,WR,72,24,89,88;Beaux Limmer,RG,71,24,65,50;Konata Mumpfield,WR,71,22,86,15;Ty Hamilton,DT,71,23,75,57;Harrison Mevis,K,70,23,70,92;Terrance Ferguson,TE,70,22,85,18;Jaylen McCollough,FS,69,24,85,2;Nick Hampton,RE,69,25,86,6;Shaun Dolac,WLB,69,23,85,56;David Quessenberry,RT,68,35,68,68;Troy Reeder,MLB,68,30,87,51;Xavier Smith,WR,68,27,90,19;Davis Allen,TE,67,24,82,87;Jimmy Garoppolo,QB,67,33,74,11;Josh Wallace,CB,67,25,86,30;Justin Dedich,LG,67,25,60,67;Ronnie Rivers,HB,67,26,88,20;Desjuan Johnson,RE,65,25,72,94;Nick Vannett,TE,64,32,76,38;Stetson Bennett IV,QB,63,27,84,13;Keir Thomas,RE,62,27,77,96"],
+"Dolphins":["#008E97","Tyreek Hill,WR,92,31,97,10;Minkah Fitzpatrick,FS,89,28,91,29;De'Von Achane,HB,87,23,96,28;Jaylen Waddle,WR,86,26,97,17;Aaron Brewer,C,85,27,74,55;Zach Sieler,DT,83,29,78,92;Darren Waller,TE,82,32,88,83;Jordyn Brooks,MLB,82,27,87,20;Rasul Douglas,CB,82,30,89,26;Patrick Paul,LT,80,23,68,52;Bradley Chubb,RE,78,29,84,2;Jake Bailey,P,78,28,82,16;James Daniels,RG,77,27,66,78;Jason Sanders,K,77,29,77,7;Tyrel Dodson,WLB,77,27,89,25;Jack Jones,CB,76,27,94,23;Kader Kohou,CB,76,26,93,4;Alexander Mattison,HB,75,27,86,8;Chop Robinson,LE,75,22,88,44;Kenneth Grant,DT,75,21,68,90;Alec Ingold,FB,74,29,83,30;Austin Jackson,RT,74,26,72,73;Ifeatu Melifonwu,SS,74,26,88,9;Nick Westbrook-Ikhine,WR,74,28,90,18;Tua Tagovailoa,QB,74,27,83,1;Ashtyn Davis,SS,73,28,92,21;Cole Strange,RG,73,27,71,69;Jaylen Wright,HB,73,22,93,5;Malik Washington,WR,73,24,90,6;Ollie Gordon II,HB,73,21,86,31;JuJu Brents,CB,72,25,88,32;Riley Patterson,K,72,25,76,47;Willie Gay Jr,SLB,72,27,87,40;Cedrick Wilson Jr,WR,71,29,88,19;Jordan Phillips,DT,71,21,72,94;K.J. Britt,WLB,71,26,81,3;Daniel Brunskill,RG,70,31,71,64;Greg Dulcich,TE,70,25,84,85;Kendall Lamm,LT,70,33,68,70;Larry Borom,RT,70,26,67,79;Artie Burns,CB,69,30,89,23;Dee Eskridge,WR,69,28,92,82;Jason Marshall Jr,CB,69,22,89,33;A.J. Green III,CB,68,27,86,24;Benito Jones,DT,68,27,69,95;Jonah Savaiinaea,LG,68,21,74,72;Tahj Washington,WR,68,24,88,84;Dante Trader Jr,FS,67,22,84,11;Ethan Bonner,CB,67,25,92,27;Liam Eichenberg,LG,67,27,68,74;Matthew Butler,DT,67,26,72,91;Cameron Goode,LE,66,27,85,53;Quinton Bell,RE,66,29,89,56;Isaiah Johnson,CB,65,25,92,46;Zach Wilson,QB,65,26,83,0;Zeek Biggers,DT,65,21,69,93;Elijah Campbell,SS,63,30,90,22;Jackson Woodard,MLB,63,23,84,42;Jordan Colbert,WLB,63,25,86,43;Julian Hill,TE,63,25,83,89;Quinn Ewers,QB,63,22,78,14;Storm Duck,CB,63,24,91,36;Yodny Cajuste,LT,63,29,64,63;Andrew Meyer,C,62,25,70,60;Jalin Conyers,TE,62,24,81,47;Cam Miller,QB,60,24,78,15"],
+"Vikings":["#4F2683","Justin Jefferson,WR,94,26,91,18;Ryan Kelly,C,91,32,69,78;Christian Darrisaw,LT,90,26,73,71;Jonathan Allen,DT,88,30,73,93;Brian O'Neill,RT,87,29,76,75;Harrison Smith,FS,87,36,87,22;Jonathan Greenard,LE,85,28,86,58;Byron Murphy Jr,CB,84,27,92,7;Jordan Addison,WR,84,23,90,3;Andrew Van Ginkel,RE,83,30,87,43;T.J. Hockenson,TE,83,28,83,87;Josh Metellus,SS,82,27,89,44;Will Reichard,K,82,24,78,16;Blake Cashman,WLB,81,29,88,51;Jordan Mason,HB,81,26,89,27;Aaron Jones Sr,HB,80,30,89,33;Isaiah Rodgers Sr,CB,80,27,95,2;Javon Hargrave,DT,80,32,75,97;Jalen Redmond,DT,79,26,79,61;Will Fries,RG,78,27,59,76;Dallas Turner,RE,77,22,90,15;Ivan Pace Jr,WLB,77,24,85,0;Jalen Nailor,WR,77,26,91,1;Rondale Moore,WR,76,25,93,4;C.J. Ham,FB,75,32,83,30;Donovan Jackson,LG,75,22,67,74;Eric Wilson,MLB,75,30,87,55;Ryan Wright,P,75,25,81,17;Josh Oliver,TE,73,28,86,84;Ty Chandler,HB,73,27,93,32;Blake Brandel,RG,72,28,69,64;Fabian Moreau,CB,72,31,91,23;J.J. McCarthy,QB,71,22,85,9;Jeff Okudah,CB,71,26,90,8;Tai Felton,WR,71,22,93,13;Tavierre Thomas,FS,71,29,90,37;Theo Jackson,FS,70,26,90,26;Zavier Scott,HB,70,26,89,36;Bo Richter,LE,69,25,87,98;Jay Ward,SS,69,25,87,24;Levi Drake Rodriguez,DT,69,25,72,50;Carson Wentz,QB,68,32,81,11;Justin Skule,LT,67,28,65,67;Tyrion Ingram-Dawkins,LE,67,22,77,90;Dwight McGlothern,CB,66,23,90,6;Myles Price,WR,66,23,92,4;Chaz Chambliss,RE,65,22,81,57;Gavin Bartholomew,TE,64,22,82,86;Tyler Batty,LE,63,26,80,96;Walter Rouse,RT,63,24,64,73;Ben Sims,TE,62,25,85,89;Benjamin Yurosek,TE,62,23,84,85;Elijah Williams,DT,62,22,65,99;Joe Huber,LG,62,23,66,60;Michael Jurgens,C,62,25,58,65;John Wolford,QB,61,29,80,5"],
+"Patriots":["#002244","Christian Gonzalez,CB,98,23,96,0;Drake Maye,QB,93,23,89,10;Stefon Diggs,WR,87,31,88,8;Hunter Henry,TE,86,30,85,85;Mike Onwenu,RG,86,27,66,71;Milton Williams,DT,86,26,83,97;Carlton Davis III,CB,85,28,90,7;Robert Spillane,MLB,85,29,87,14;Harold Landry III,RE,82,29,85,2;Marcus Jones,CB,82,26,92,25;Morgan Moses,RT,82,34,65,76;TreVeyon Henderson,HB,82,22,95,32;Craig Woodson,SS,81,24,91,31;Will Campbell,LT,81,21,73,66;Kayshon Boutte,WR,80,23,91,9;Christian Barmore,DT,79,26,74,90;Antonio Gibson,HB,78,27,92,4;Bryce Baringer,P,78,26,73,17;Jaylinn Hawkins,FS,78,28,88,21;Anfernee Jennings,RE,77,28,82,33;DeMario Douglas,WR,77,24,91,3;Mack Hollins,WR,77,31,91,13;Rhamondre Stevenson,HB,77,27,88,38;Garrett Bradbury,C,76,30,73,65;Jahlani Tavai,WLB,75,28,84,48;K'Lavon Chaisson,LE,75,26,86,44;Andres Borregales,K,74,23,75,36;Austin Hooper,TE,74,30,81,81;Christian Elliss,WLB,73,26,85,53;Khyiris Tonga,DT,73,29,68,95;Kyle Williams,WR,73,22,94,18;Jack Westover,FB,72,26,80,37;Jack Gibbens,WLB,72,26,86,51;Jared Wilson,LG,72,22,78,58;Joshua Farmer,DT,71,22,69,92;Marte Mapu,MLB,71,25,88,15;Alex Austin,CB,70,24,88,28;Chad Muma,SLB,70,26,85,49;Jaquelin Roy,DT,70,24,68,94;Bradyn Swinson,LE,69,23,84,43;Caedan Wallace,LG,69,25,67,70;Dell Pettus,SS,69,24,89,24;Cory Durden,DT,68,26,65,94;Efton Chism III,WR,68,23,84,86;Elijah Ponder,LE,68,23,85,91;Joshua Dobbs,QB,68,30,88,11;Thayer Munford Jr,RT,67,25,59,74;Brenden Schooler,FS,66,28,92,41;Marcellas Dial Jr,CB,66,24,91,27;Vederian Lowe,LT,66,26,65,59;Ben Brown,C,65,27,61,77;Charles Woods,CB,65,25,86,22;Kobee Minor,CB,65,23,87,19;Terrell Jennings,HB,65,24,88,26;Eric Gregory,DT,64,24,68,55;Marcus Bryant,RT,64,23,68,52;CJ Dippre,TE,62,23,83,82;Tommy DeVito,QB,61,27,84,16"],
+"Saints":["#D3BC8D","Demario Davis,MLB,91,36,88,56;Erik McCoy,C,88,28,74,78;Chris Olave,WR,87,25,93,12;Justin Reid,FS,85,28,91,21;Chase Young,LE,81,26,85,99;Alvin Kamara,HB,80,30,88,41;Cameron Jordan,LE,80,36,77,94;Carl Granderson,RE,79,28,85,96;Juwan Johnson,TE,79,28,87,83;Davon Godchaux,DT,78,30,71,92;Julian Blackmon,SS,78,27,88,23;Alontae Taylor,CB,77,26,95,1;Charlie Smyth,K,77,24,72,39;Jonas Sanker,SS,77,22,90,33;Kelvin Banks Jr,LT,77,21,67,71;Taliese Fuaga,RT,77,23,68,75;Tyler Shough,QB,77,25,87,6;Cesar Ruiz,RG,76,26,76,51;Kendre Miller,HB,76,23,90,5;Kool-Aid McKinstry,CB,76,22,90,4;Bryan Bresee,DT,75,23,78,90;Pete Werner,WLB,75,27,84,20;Devaughn Vele,WR,74,27,90,14;Jordan Howden,FS,74,25,89,31;Nathan Shepherd,DT,74,31,73,93;Taysom Hill,TE,74,35,89,7;Ja'Lynn Polk,WR,73,23,89,13;Jonathan Bullard,DT,73,31,71,98;Quincy Riley,CB,73,24,90,29;Ugo Amadi,CB,73,28,90,0;Devin Neal,HB,72,22,87,24;Dillon Radunz,LG,72,27,69,77;Foster Moreau,TE,72,28,82,87;Isaac Yiadom,CB,72,29,89,27;Terrell Burgess,SS,72,26,89,26;Luke Fortner,C,71,27,65,79;Michael Davis,CB,71,30,91,43;Trey Palmer,WR,71,24,95,17;Audric Estime,HB,70,21,87,30;Bub Means,WR,70,25,91,16;Chris Rumph II,RE,70,26,80,58;Danny Stutsman,MLB,70,22,87,28;Dante Pettis,WR,70,29,88,11;Khristian Boyd,DT,70,25,63,97;Mason Tipton,WR,70,24,94,15;Spencer Rattler,QB,70,24,83,2;Jaylan Ford,WLB,69,23,82,53;Jonah Williams,DT,69,30,78,54;Kai Kroeger,P,69,23,80,32;Vernon Broughton,DT,68,24,72,91;Evan Hull,HB,66,24,90,34;John Ridgeway III,DT,66,26,62,95;Jack Stoll,TE,65,27,83,88;Rejzohn Wright,CB,65,24,89,25;Will Clapp,C,65,28,72,76;Asim Richards,RT,64,24,67,72;Isaiah Stalbird,WLB,63,25,89,44;Kevin Austin Jr,WR,63,25,91,81;Nick Saldiveri,RG,63,25,65,64;Landon Young,RT,62,28,66,67;Torricelli Simpkins III,RG,61,23,57,68;Xavier Truss,RT,61,24,64,74;Zaire Mitchell-Paden,TE,60,26,76,84"],
+"Giants":["#0B2265","Andrew Thomas,LT,93,26,69,78;Dexter Lawrence II,DT,93,27,76,97;Brian Burns,RE,89,27,87,0;Malik Nabers,WR,86,22,96,1;Bobby Okereke,MLB,84,29,88,58;Jevon Holland,FS,83,25,91,8;Wan'Dale Robinson,WR,83,24,91,17;Abdul Carter,RE,81,21,88,51;Cam Skattebo,HB,81,23,85,44;Tyrone Tracy Jr,HB,79,25,90,29;Cor'Dale Flott,CB,78,24,89,28;Darius Slayton,WR,78,28,94,18;Dru Phillips,CB,78,23,90,22;Jermaine Eluemunor,RT,78,30,68,72;Kayvon Thibodeaux,LE,78,24,88,5;Paulson Adebo,CB,78,26,91,21;Theo Johnson,TE,77,24,87,84;Dane Belton,SS,76,24,91,24;Devin Singletary,HB,76,27,87,26;Graham Gano,K,76,38,75,9;Greg Van Roten,RG,76,35,67,74;Jaxson Dart,QB,76,22,84,6;Micah McFadden,WLB,76,25,85,41;Deonte Banks,CB,75,24,94,2;Jon Runyan,LG,74,28,71,76;Tyler Nubin,SS,74,24,87,27;Chauncey Golston,LE,73,27,78,57;Evan Neal,RG,73,24,76,73;John Michael Schmitz Jr,C,73,26,61,61;Roy Robertson-Harris,DT,73,32,77,95;Darius Alexander,DT,72,25,74,91;Chris Manhertz,TE,71,33,78,85;Daniel Bellinger,TE,71,24,85,82;Isaiah Hodgins,WR,71,26,87,89;Jameis Winston,QB,71,31,76,19;Jamie Gillan,P,71,28,76,12;Ben Sauls,K,70,24,73,30;Darius Muasau,WLB,70,24,82,53;Jalin Hyatt,WR,70,23,94,13;Rakeem Nunez-Roches Sr,DT,70,32,72,93;Victor Dimukeje,RE,70,25,77,52;Aaron Stinnie,LG,69,31,70,64;Russell Wilson,QB,69,36,84,3;Bryce Ford-Wheaton,WR,68,25,92,88;Korie Black,CB,68,23,94,38;Neville Hewitt,MLB,68,32,85,47;Austin Schlottmann,C,67,29,70,65;Beaux Collins,WR,67,22,88,81;D.J. Davidson,DT,67,27,65,98;Eric Gray,HB,67,25,86,20;Marcus Mbow,RT,67,22,71,71;Dalen Cambre,WR,66,24,91,83;Gunner Olszewski,WR,66,28,88,80;Rico Payton,CB,66,25,86,36;Ryan Miller,WR,66,25,88,9;Art Green,CB,65,25,94,23;Chris Board,WLB,65,30,87,49;Thomas Fidone II,TE,65,22,81,86;Zaire Barnes,WLB,65,25,88,46;Caleb Murphy,RE,64,25,79,37;Joshua Ezeudu,LT,64,25,66,75;Nic Jones,CB,64,22,89,31;Tomon Fox,LE,64,27,81,45;Beau Brade,FS,63,23,84,34;James Hudson III,LT,63,26,60,55;Demetrius Flannigan-Fowles,MLB,62,28,86,33"],
+"Jets":["#125740","Nick Folk,K,88,40,67,6;Breece Hall,HB,86,24,93,20;Garrett Wilson,WR,86,25,92,5;Alijah Vera-Tucker,RG,83,26,75,75;Armand Membou,RT,83,21,74,70;John Simpson,LG,80,28,70,76;Joe Tippmann,C,79,24,73,66;Quincy Williams,WLB,79,29,88,56;Harrison Phillips,DT,78,29,70,97;Will McDonald IV,LE,78,26,82,9;Andre Cisco,FS,77,25,92,8;Jamien Sherwood,MLB,77,25,86,44;Jermaine Johnson II,RE,77,26,85,11;Brandon Stephens,CB,76,27,90,21;Tony Adams,SS,76,26,90,22;Adonai Mitchell,WR,75,22,94,15;Jarvis Brownlee Jr,CB,75,24,92,29;Josh Reynolds,WR,75,30,88,83;Olu Fashanu,LT,75,22,69,74;Azareye'h Thomas,CB,74,21,86,23;Jowon Briggs,DT,74,24,72,91;Khalil Herbert,HB,74,27,88,31;Mason Taylor,TE,74,21,83,85;Austin McNamara,P,73,24,76,14;John Metchie III,WR,73,25,90,3;Braelon Allen,HB,72,21,88,0;Isaiah Oliver,SS,72,28,89,26;Josh Myers,C,72,27,62,71;Justin Fields,QB,72,26,92,7;Ja'Sir Taylor,CB,71,26,92,36;Malachi Moore,FS,71,23,87,27;Micheal Clemons,RE,71,28,77,72;Isaiah Davis,HB,70,23,87,32;Mazi Smith,DT,70,24,74,58;Mykal Walker,MLB,70,28,87,53;Tyler Johnson,WR,70,27,87,16;Khalen Saunders,DT,69,29,72,99;Tyler Baron,LE,69,23,85,94;Tyrod Taylor,QB,69,36,86,2;Andrew Beck,FB,68,29,86,47;Arian Smith,WR,68,23,94,82;Jay Tufele,DT,68,26,71,78;Jeremy Ruckert,TE,68,25,82,89;Braiden McGregor,LE,67,24,80,55;Christopher Smith II,SS,67,25,86,17;Chukwuma Okorafor,RT,67,28,67,79;Francisco Mauigoa,WLB,67,22,84,51;Isaiah Williams,WR,67,24,87,18;Jelani Woods,TE,67,26,85,86;Kene Nwangwu,HB,67,27,93,34;Kris Boyd,CB,67,28,90,17;Qwan'tez Stiggers,CB,67,23,91,37;Kobe King,WLB,66,22,83,45;Max Mitchell,LT,66,25,62,61;Eric Watts,LE,65,24,83,95;Cam Jones,MLB,64,25,85,43;Dean Clark,FS,64,24,89,35;Irvin Charles,WR,64,28,87,19;Keidron Smith,SS,64,25,86,46;Marcelino McCrary-Ball,WLB,64,26,89,41;Stone Smartt,TE,64,26,85,84;Jordan Clark,CB,63,24,88,33;Brady Cook,QB,62,23,85,4;Jarius Monroe,FS,62,24,86,25"],
+"Eagles":["#004C54","Lane Johnson,RT,99,35,77,65;Saquon Barkley,HB,92,28,95,26;DeVonta Smith,WR,91,26,92,6;Jordan Mailata,LT,91,28,74,68;Zack Baun,WLB,90,28,87,53;A.J. Brown,WR,89,28,91,11;Jalen Carter,DT,89,24,82,98;Quinyon Mitchell,CB,89,24,94,27;Dallas Goedert,TE,88,30,86,88;Cooper DeJean,CB,85,22,92,33;Landon Dickerson,LG,85,26,67,69;Jalen Hurts,QB,83,27,89,1;Nolan Smith Jr,LE,83,24,90,3;Jordan Davis,DT,82,25,82,90;Jaelan Phillips,RE,81,26,86,50;Braden Mann,P,79,27,78,10;Jake Elliott,K,79,30,76,4;Jihaad Campbell,MLB,79,21,89,30;Reed Blankenship,FS,79,26,87,32;Jaire Alexander,CB,78,28,91,18;Nakobe Dean,MLB,78,24,87,17;Brandon Graham,LE,77,37,77,55;Cam Jurgens,C,77,26,75,51;Tank Bigsby,HB,77,24,92,37;Michael Carter II,CB,76,26,92,35;A.J. Dillon,HB,75,27,88,29;Adoree' Jackson,CB,75,29,92,8;Joshua Uche,RE,75,26,87,0;Marcus Epps,FS,75,29,87,39;Moro Ojomo,DT,75,24,71,97;Andrew Mukuba,SS,74,22,91,24;Jahan Dotson,WR,74,25,92,2;Jalyx Hunt,RE,74,24,84,58;Tyler Steen,RG,74,25,64,56;Azeez Ojulari,LE,73,25,85,13;Jakorian Bennett,CB,73,25,95,23;Kelee Ringo,CB,73,23,94,7;Ogbo Okoronkwo,LE,72,30,81,45;Sydney Brown,SS,72,25,90,21;Will Shipley,HB,72,23,91,28;Mac McWilliams,CB,71,23,92,22;Ty Robinson,DT,71,24,78,95;Matt Pryor,RT,70,30,60,79;Byron Young,DT,69,24,71,94;Grant Calcaterra,TE,69,26,85,81;Kylen Granson,TE,69,27,85,83;Smael Mondon Jr,WLB,69,22,86,42;Darius Cooper,WR,68,23,89,80;Johnny Wilson,WR,68,24,88,89;Jeremiah Trotter Jr,SLB,67,22,78,54;Cameron Williams,RT,66,21,66,73;Fred Johnson,LT,66,28,63,74;Britain Covey,WR,65,28,89,18;Cameron Latu,TE,65,25,80,36;Drew Kendall,C,65,23,71,66;Myles Hinton,RT,65,23,66,78;Sam Howell,QB,65,24,82,14;Ben VanSumeren,FB,64,25,91,43;Brett Toth,LG,64,29,68,64;Tanner McKee,QB,64,25,77,16;Willie Lampkin IV,RG,63,23,65,61"],
+"Steelers":["#FFB612","Cameron Heyward,DT,95,36,75,97;Jalen Ramsey,FS,94,30,94,5;T.J. Watt,LE,94,30,83,90;Alex Highsmith,RE,87,28,85,56;Chris Boswell,K,86,34,73,9;D.K. Metcalf,WR,85,27,95,4;Joey Porter,CB,85,25,90,24;Zach Frazier,C,85,24,64,54;Jaylen Warren,HB,82,26,90,30;Isaac Seumalo,LG,81,31,69,73;Aaron Rodgers,QB,80,41,78,8;DeShon Elliott,SS,80,28,88,25;Patrick Queen,MLB,80,26,88,6;Kenneth Gainwell,HB,79,26,89,14;Pat Freiermuth,TE,79,26,83,88;Chuck Clark,FS,78,30,87,21;Nick Herbig,RE,78,23,84,51;Derrick Harmon,DT,77,22,74,99;James Pierre,CB,77,28,94,42;Jonnu Smith,TE,77,30,89,81;Kyle Dugger,SS,77,29,89,29;Mason McCormick,RG,77,25,70,66;Troy Fautanu,RT,77,24,72,76;Asante Samuel Jr,CB,76,25,91,22;Calvin Austin,WR,76,26,95,19;Corliss Waitman,P,76,30,71,3;Darnell Washington,TE,76,24,84,80;Keeanu Benton,DT,76,24,70,95;Adam Thielen,WR,75,35,88,16;Brandin Echols,CB,75,27,92,26;Cole Holcomb,WLB,75,29,87,55;Payton Wilson,WLB,75,25,92,41;Kaleb Johnson,HB,74,22,88,20;Marquez Valdes-Scantling,WR,74,30,93,11;Jabrill Peppers,SS,73,29,88,40;Malik Harrison,MLB,73,27,85,50;Jack Sawyer,LE,72,23,80,33;Andrus Peat,LT,71,31,68,71;Broderick Jones,LT,71,24,73,77;Daniel Ekuale,DT,71,31,67,96;Dean Lowry,DT,71,31,76,94;Roman Wilson,WR,71,24,93,10;Ben Skowronek,WR,70,28,85,15;Logan Lee,DT,70,25,71,91;Scott Miller,WR,70,28,94,13;Donte Kent,CB,68,23,93,34;Yahya Black,DT,68,23,60,94;Cory Trice Jr,CB,67,25,90,27;Donald Parham,TE,67,28,85,89;Jack Driscoll,RG,67,28,70,68;Miles Killebrew,FS,67,32,86,28;Spencer Anderson,LG,67,25,67,74;Connor Heyward,TE,66,26,82,83;Esezi Otomewo,DT,66,26,76,93;Mason Rudolph,QB,66,30,74,2;Max Scharping,RG,66,29,65,64;Isaiahh Loudermilk,DT,65,27,69,92;Jeremiah Moon,LE,65,27,80,53;Calvin Anderson,RT,64,29,65,67;Carson Bruener,MLB,64,24,86,44;Skylar Thompson,QB,64,28,77,17;Will Howard,QB,64,23,81,18;Dylan Cook,RT,63,27,69,60;Sebastian Castro,FS,62,24,86,49"],
+"49ers":["#AA0000","George Kittle,TE,98,31,87,85;Fred Warner,MLB,97,28,88,54;Trent Williams,LT,97,37,77,71;Christian McCaffrey,HB,96,29,90,23;Nick Bosa,LE,95,27,80,97;Kyle Juszczyk,FB,88,34,86,44;Brock Purdy,QB,86,25,78,13;Brandon Aiyuk,WR,84,27,91,11;Dominick Puni,RG,82,25,61,77;Colton McKivitz,RT,81,29,71,68;Deommodore Lenoir,CB,81,25,91,2;Jauan Jennings,WR,81,28,88,15;Ricky Pearsall,WR,80,24,92,1;Brian Robinson Jr,HB,78,26,88,3;Dee Winters,WLB,77,24,89,53;Eddy Pineiro,K,77,29,76,18;Jake Brendel,C,77,32,69,64;Kendrick Bourne,WR,77,30,88,84;Mykel Williams,RE,77,21,81,98;Renardo Green,CB,77,24,90,0;Bryce Huff,RE,76,27,83,47;Demarcus Robinson,WR,76,30,88,5;Eric Kendricks,MLB,76,33,86,43;Thomas Morstead,P,76,39,71,7;Upton Stout,CB,75,23,91,20;Yetur Gross-Matos,LE,75,27,83,94;Ji'Ayir Brown,SS,74,25,86,27;Mac Jones,QB,74,26,84,10;Malik Mustapha,FS,74,23,88,6;Clelin Ferrell,RE,73,28,83,96;Isaac Guerendo,HB,73,25,92,31;Jason Pinnock,FS,73,26,89,25;Keion White,RE,73,26,82,56;Kevin Givens,DT,73,28,73,90;Marques Sigle,SS,73,23,92,36;Alfred Collins,DT,72,23,73,95;Ben Bartch,LG,72,27,67,78;Jake Tonges,TE,72,26,86,88;Jordan James,HB,72,21,89,29;Skyy Moore,WR,72,24,89,9;Jacob Cowing,WR,71,24,93,19;Nick Martin,WLB,71,22,88,45;Jordan Elliott,DT,70,27,71,92;Tatum Bethune,MLB,70,24,81,48;CJ West,DT,69,23,74,99;Darrell Luter Jr,CB,69,25,90,28;Jordan Watkins,WR,69,23,93,17;Sam Okuayinonu,LE,68,27,80,91;Chase Lucas,CB,67,28,90,26;Kalia Davis,DT,67,26,70,93;Matt Hennessy,C,67,27,66,61;Spencer Burford,LT,67,25,66,74;Connor Colby,LG,66,22,69,75;Siran Neal,FS,66,31,90,33;Austen Pleasants,RT,65,28,62,62;Trent Taylor,WR,65,31,86,81;Luke Farrell,TE,64,27,78,89;Luke Gifford,MLB,64,30,86,57;Brayden Willis,TE,63,25,84,82;Robert Beal Jr,LE,63,26,90,51;Garret Wallow,MLB,62,26,83,49;Kurtis Rourke,QB,62,24,76,4;Tarron Jackson,LE,62,27,81,56;Patrick Taylor Jr,HB,61,27,87,32"],
+"Seahawks":["#69BE28","Jaxon Smith-Njigba,WR,95,23,91,11;Devon Witherspoon,CB,91,24,91,21;Kenneth Walker III,HB,90,24,94,9;Leonard Williams,DT,88,31,78,99;DeMarcus Lawrence,LE,87,33,83,0;Julian Love,FS,85,27,90,20;Michael Dickson,P,85,29,77,4;Nick Emmanwori,SS,85,21,93,3;Sam Darnold,QB,85,28,81,14;Byron Murphy II,DT,84,22,77,91;Cooper Kupp,WR,84,32,89,10;Jason Myers,K,84,34,69,5;Abraham Lucas,RT,83,26,75,72;Charles Cross,LT,83,24,74,67;Ernest Jones IV,MLB,83,25,86,13;Zach Charbonnet,HB,82,24,88,26;Tariq Woolen,CB,81,26,95,27;Grey Zabel,LG,79,23,74,76;Rashid Shaheed,WR,79,27,95,22;Boye Mafe,RE,78,26,90,53;Jarran Reed,DT,78,31,71,90;Derick Hall,RE,77,24,87,58;Josh Jobe,CB,77,27,90,29;Uchenna Nwosu,LE,77,28,82,7;Coby Bryant,FS,76,26,88,8;A.J. Barner,TE,75,23,78,88;Drake Thomas,WLB,75,25,82,42;Tory Horton,WR,75,22,93,15;Tyrice Knight,WLB,75,24,85,48;Robbie Ouzts,FB,73,22,75,40;Anthony Bradford,RG,72,24,70,75;Christian Haynes,RG,72,25,71,64;Josh Jones,RT,71,28,67,74;Elijah Arroyo,TE,70,22,87,18;Ty Okada,SS,70,26,90,39;Jake Bobo,WR,69,27,85,19;Jalen Sundell,C,69,25,66,61;Nehemiah Pritchett,CB,69,24,94,28;Rylie Mills,DT,69,24,73,98;Mike Morris,DT,68,24,74,94;Dareke Young,WR,67,26,91,83;Eric Saubert,TE,67,31,82,81;George Holani,HB,67,25,89,36;Bryce Cabeldue,LG,66,23,74,77;Drew Lock,QB,66,28,83,2;Olusegun Oluwatimi,C,66,26,60,55;Jalen Milroe,QB,65,22,93,6;Chazz Surratt,SLB,64,28,85,44;Cody White,WR,64,26,83,82;Connor O'Toole,RE,64,23,84,57;Kenny McIntosh,HB,64,25,87,25;AJ Finley,SS,63,23,87,30;Brandon Pili,DT,63,26,61,95;Mason Richman,RT,63,23,60,78;Brady Russell,TE,61,27,80,38;Amari Kight,LT,60,24,64,79;Nick Kallerup,TE,60,24,81,89"],
+"Buccaneers":["#D50A0A","Tristan Wirfs,LT,95,26,77,78;Vita Vea,DT,94,30,74,50;Antoine Winfield Jr,FS,92,27,90,31;Mike Evans,WR,91,32,90,13;Bucky Irving,HB,86,23,89,7;Jamel Dean,CB,86,28,92,35;Lavonte David,MLB,85,35,86,54;Baker Mayfield,QB,84,30,86,6;Luke Goedeke,RT,84,26,63,67;Chris Godwin Jr,WR,82,29,88,14;Emeka Egbuka,WR,81,22,90,2;Zyon McCollum,CB,81,26,93,27;Tykee Smith,SS,79,24,90,23;Yaya Diaby,RE,79,26,89,0;Chase McLaughlin,K,78,29,73,4;Cody Mauch,RG,78,26,70,69;Rachaad White,HB,78,26,90,1;Jacob Parrish,CB,77,21,94,25;Calijah Kancey,DT,76,24,83,94;Graham Barton,C,76,23,74,62;Haason Reddick,LE,76,30,85,5;Riley Dixon,P,76,32,77,9;Sterling Shepard,WR,76,32,87,17;Benjamin Morrison,CB,75,21,92,21;Cade Otton,TE,75,26,81,88;Anthony Nelson,LE,74,28,80,98;Ben Bredeson,LG,74,27,71,68;Jalen McMillan,WR,74,23,90,11;Logan Hall,DT,74,25,76,90;Anthony Walker Jr,WLB,73,30,85,3;Chris Braswell,RE,73,23,86,43;Christian Izien,CB,73,25,92,29;Greg Gaines,DT,73,29,71,96;Tez Johnson,WR,73,23,89,15;Deion Jones,MLB,72,30,87,45;Kindle Vildor,CB,72,27,89,22;SirVocea Dennis,WLB,72,25,85,8;Sean Tucker,HB,71,23,92,44;Dan Feeney,RG,70,31,67,65;Elijah Roberts,DT,70,23,80,95;David Walker,RE,69,25,83,51;Elijah Klein,RG,69,25,62,79;Josh Hayes,CB,69,26,91,32;Michael Jordan,LG,69,27,69,60;Elijah Simmons,DT,67,24,63,92;Teddy Bridgewater,QB,67,32,80,10;Ko Kieft,TE,65,27,73,41;Markees Watts,LE,65,25,81,58;Charlie Heck,LT,64,28,67,77;JJ Roberts,FS,64,23,91,36;Kameron Johnson,WR,64,23,90,19;Luke Haggard,RG,64,25,67,72;Payne Durham,TE,64,25,77,87;Rashad Wisdom,FS,64,24,87,38;Devin Culp,TE,62,25,90,82;J.T. Gray,SS,62,29,90,48;Benjamin Chukwuma,RT,60,24,61,70"],
+"Titans":["#4B92DB","Jeffery Simmons,DT,95,28,78,98;Kevin Zeitler,RG,89,35,73,70;Peter Skoronski,LG,84,24,67,77;Tony Pollard,HB,83,28,91,20;Xavier Woods,FS,81,30,88,25;L'Jarius Sneed,CB,80,28,94,38;JC Latham,RT,79,22,63,55;T'Vondre Sweat,DT,79,24,63,93;Amani Hooker,SS,78,27,88,37;Calvin Ridley,WR,78,30,93,0;Cedric Gray,WLB,78,22,84,33;Cody Barton,MLB,78,28,85,50;Sebastian Joseph-Day,DT,78,30,74,69;Elic Ayomanor,WR,77,22,91,5;Johnny Hekker,P,77,35,74,3;Tyjae Spears,HB,77,24,88,2;Chigoziem Okonkwo,TE,76,25,88,85;Joey Slye,K,76,29,71,6;Lloyd Cushenberry III,C,75,27,71,79;Arden Key,RE,74,29,81,49;Chimere Dike,WR,74,23,94,17;Darrell Baker,CB,74,27,91,39;Cam Ward,QB,73,23,82,1;Dan Moore,LT,73,26,65,75;Kevin Winston Jr,FS,73,21,89,23;Oluwafemi Oladejo,LE,73,21,85,7;Kaiir Elam,CB,72,24,93,35;Van Jefferson,WR,72,29,89,11;Marcus Harris,CB,71,24,93,26;Gunnar Helm,TE,70,22,78,84;Kalel Mullings,HB,69,22,87,31;Jalyn Armour-Davis,CB,68,25,93,18;James Lynch,DT,68,26,72,97;James Proche II,WR,68,28,87,13;Jihad Ward,LE,68,31,68,53;Will Levis,QB,68,26,80,8;Jackson Slater,LG,67,22,72,64;James Williams Sr,MLB,67,22,84,52;Joe Bachie,WLB,67,27,82,48;Julius Chestnut,HB,67,24,88,36;Micah Robinson,CB,67,23,92,21;Olisaemeka Udoh,LT,67,28,70,72;Ali Gaye,RE,66,26,82,99;Blake Hance,RG,66,29,70,73;Erick Hallett II,SS,66,25,89,41;Jaylen Harrell,LE,66,23,83,92;Sanoussi Kane,SS,66,23,88,42;Bryce Oliver,WR,65,25,87,80;Jerrick Reed II,FS,65,25,91,28;Truman Jones,RE,65,25,83,56;Corey Levin,C,64,31,64,62;Garrett Dellinger,LG,64,23,67,71;Mike Brown,SS,64,26,89,44;C.J. Ravenell,DT,63,25,70,91;Kendell Brooks,FS,63,25,91,30;Mason Kinsey,WR,63,27,86,12;David Martin-Robinson,TE,62,25,85,88;Dorian Mausi Jr,WLB,62,23,83,54;Drew Moss,RG,62,22,72,67;Brandon Crenshaw-Dickson,RT,61,24,61,78;Kemon Hall,CB,61,28,87,40"],
+"Commanders":["#5A1414","Laremy Tunsil,LT,94,31,72,78;Bobby Wagner,MLB,92,35,84,54;Terry McLaurin,WR,90,29,96,17;Sam Cosmi,RG,87,26,77,76;Da'Ron Payne,DT,84,28,77,94;Marshon Lattimore,CB,84,29,90,2;Deebo Samuel Sr,WR,81,29,91,1;Von Miller,LE,81,36,84,24;Tyler Biadasz,C,80,27,75,63;Dorance Armstrong,LE,79,28,79,92;Frankie Luvu,WLB,79,28,85,4;Jayden Daniels,QB,79,24,90,5;Jacory Croskey-Merritt,HB,78,24,92,22;Zach Ertz,TE,78,34,82,86;Mike Sainristil,CB,77,24,90,0;Quan Martin,FS,77,25,90,20;Tress Way,P,77,35,73,10;Trey Amos,CB,77,23,91,23;Austin Ekeler,HB,76,30,89,30;Jacob Martin,RE,76,29,86,55;Jer'Zhan Newton,DT,76,23,78,95;Preston Smith,RE,76,32,80,52;Chris Paul,LG,75,26,76,75;Noah Brown,WR,75,29,89,85;Andrew Wylie,RT,74,31,68,71;Deatrich Wise Jr,RE,74,31,75,91;Eddie Goldman,DT,74,31,63,97;Jaylin Lane,WR,74,23,94,83;Antonio Hamilton Sr,CB,73,32,90,34;Drake Jackson,LE,73,24,84,93;George Fant,RT,73,33,76,77;Jeremy Reaves,SS,73,29,86,39;Jeremy McNichols,HB,73,29,88,26;Jonathan Jones,CB,73,31,92,31;Nick Allegretti,RG,73,29,67,67;Treylon Burks,WR,73,25,89,13;Chase Edmonds,HB,72,29,90,38;Chris Moore,WR,72,32,88,19;Chris Rodriguez Jr,HB,72,24,89,36;Javon Kinlaw,DT,72,27,73,99;Josh Conerly Jr,RT,72,21,71,72;Luke McCaffrey,WR,72,24,90,11;Marcus Mariota,QB,72,31,87,8;Will Harris,FS,72,29,89,3;Brandon Coleman,LG,71,24,73,74;Noah Igbinoghene,CB,71,25,91,6;Percy Butler,SS,71,25,92,35;Shy Tuttle,DT,71,29,75,79;Ben Sinnott,TE,69,23,83,82;Nick Bellore,WLB,69,36,85,57;Jake Moody,K,68,25,65,16;Jalyn Holmes,LE,68,29,78,96;Sheldon Day,DT,68,31,69,98;Jordan Magee,MLB,67,24,87,58;Javontae Jean-Baptiste,LE,66,25,84,90;John Bates,TE,66,27,78,87;Kain Medrano,WLB,66,24,90,56;Lucas Niang,RT,66,27,66,53;Ale Kaho,WLB,65,25,86,51;Tyler Owens,SS,65,24,93,18;Colson Yankoff,TE,61,25,85,80;Jeff Driskel,QB,61,32,85,7;Josh Johnson,QB,61,39,80,14;Trent Scott,LT,60,31,68,73"]
+};
+const GROUP={FB:"HB",LT:"OL",LG:"OL",C:"OL",RG:"OL",RT:"OL",LE:"DL",RE:"DL",DT:"DL",WLB:"LB",MLB:"LB",SLB:"LB",FS:"S",SS:"S",P:"K"};
+const PLAYERS=[];
+for(const [team,[color,list]] of Object.entries(TEAMS)) for(const row of list.split(";")){
+  const [n,pos,o,a,sp,j]=row.split(","); PLAYERS.push({n,pos,g:GROUP[pos]||pos,o:+o,a:+a,sp:+sp,j:+j,team,color});
+}
+const POSITIONS=["QB","HB","WR","TE","OL","DL","LB","CB","S","K"];
+const OFF=["QB","HB","WR","TE","OL"], DEF=["DL","LB","CB","S"];
+const BUCKETS=["60–69","70–74","75–79","80–84","85–89","90–94","95+"];
+const bucket=o=>o<70?0:o<75?1:o<80?2:o<85?3:o<90?4:o<95?5:6;
+const tier=o=>o>=95?"legend":o>=90?"elite":o>=80?"gold":o>=70?"silver":"bronze";
+const TIERNAME={bronze:"Bronze",silver:"Silver",gold:"Gold",elite:"Elite",legend:"Legend"};
+const TIERCOLOR={bronze:"#d08a4f",silver:"#dfe6ec",gold:"#ffd866",elite:"#ff5a5a",legend:"#7ef0ff"};
+
+const PACKS=[
+  {id:"bronze",name:"Bronze Pack",cls:"pk-bronze",bundle:5,min:60,max:85,w:[70,18,8,3.2,0.8,0,0],desc:"Mostly 60s. Best possible pull is an 85."},
+  {id:"silver",name:"Silver Pack",cls:"pk-silver",min:70,max:89,w:[0,55,30,12,3,0,0],desc:"Nothing under 70. Tops out at 89."},
+  {id:"gold",name:"Gold Pack",cls:"pk-gold",bundle:3,min:75,max:99,w:[0,0,50,32,14,3.5,0.5],desc:"Nothing under 75. Small shot at a 90+."},
+  {id:"elite",name:"Elite Pack",cls:"pk-elite",min:80,max:99,w:[0,0,0,50,33,13,4],desc:"Nothing under 80. Best odds at a 95+."},
+  {id:"team",name:"Team Pack",cls:"pk-team",min:60,max:85,w:[65,18,10,5.5,1.5,0,0],desc:"5 players from one team. Capped at 85.",pick:"team"},
+  {id:"pos",name:"Position Pack",cls:"pk-pos",min:60,max:94,w:[35,30,20,11,3.5,0.5,0],desc:"5 players at one position. Capped at 94.",pick:"pos"}
+];
+
+/* ---------- drawing a pack ---------- */
+function drawPack(pack,opt){
+  let pool=PLAYERS.filter(p=>p.o>=pack.min&&p.o<=pack.max);
+  if(pack.pick==="team") pool=pool.filter(p=>p.team===opt);
+  if(pack.pick==="pos") pool=pool.filter(p=>p.g===opt);
+  const out=[];
+  for(let i=0;i<5;i++){
+    const avail=pool.filter(p=>!out.includes(p)); if(!avail.length) break;
+    const by=BUCKETS.map((_,b)=>avail.filter(p=>bucket(p.o)===b));
+    let w=pack.w.map((x,b)=>by[b].length?x:0), tot=w.reduce((a,b)=>a+b,0);
+    if(!tot){ w=by.map(l=>l.length?1:0); tot=w.reduce((a,b)=>a+b,0); }
+    let r=Math.random()*tot, b=0; for(;b<w.length;b++){ r-=w[b]; if(r<0) break; }
+    const l=by[Math.min(b,6)]; out.push(l[Math.floor(Math.random()*l.length)]);
+  }
+  return out.sort((a,b)=>a.o-b.o);
+}
+
+/* ---------- sound ---------- */
+let muted=false, actx=null;
+try{ muted=localStorage.getItem("po-mute")==="1"; }catch(e){}
+function tone(f,d,type,vol,when){
+  if(muted) return;
+  try{
+    actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+    const t=actx.currentTime+(when||0), o=actx.createOscillator(), g=actx.createGain();
+    o.type=type||"triangle"; o.frequency.setValueAtTime(f,t);
+    g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol||0.12,t+0.015); g.gain.exponentialRampToValueAtTime(0.0001,t+d);
+    o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t+d+0.02);
+  }catch(e){}
+}
+const sfx={
+  shake(){ for(let i=0;i<7;i++) tone(120+i*25,0.08,"sawtooth",0.05,i*0.1); },
+  rip(){ tone(90,0.35,"sawtooth",0.12); tone(900,0.25,"square",0.04,0.02); },
+  flip(o){ tone(380+ (o-60)*9,0.12,"triangle",0.1); },
+  step(i){ tone([165,196,247,294,392][i],0.35,"sawtooth",0.09); },
+  drum(){ for(let i=0;i<10;i++) tone(70,0.07,"square",0.07,i*0.09); },
+  big(){ [392,494,587,784].forEach((f,i)=>tone(f,0.7,"triangle",0.1,i*0.07)); }
+};
+const muteBtn=document.getElementById("mute");
+function renderMute(){ muteBtn.textContent=muted?"🔇 Muted":"🔊 Sound"; }
+muteBtn.onclick=()=>{ muted=!muted; try{localStorage.setItem("po-mute",muted?"1":"0");}catch(e){} renderMute(); };
+renderMute();
+
+/* ---------- store ---------- */
+const $=id=>document.getElementById(id);
+const packArt=(p,label)=>`<div class="pack ${p.cls}"><div class="crimp t"></div><div class="ball">🏈</div><div class="pname">${label||p.name.replace(" Pack","")}</div><div class="crimp b"></div></div>`;
+const storeEl=$("store");
+PACKS.forEach(p=>{
+  const d=document.createElement("div"); d.className="tile";
+  let sel="";
+  if(p.pick==="team") sel=`<select id="sel-team"><option value="">Random team</option>${Object.keys(TEAMS).map(t=>`<option>${t}</option>`).join("")}</select>`;
+  if(p.pick==="pos") sel=`<select id="sel-pos"><option value="">Random position</option>${POSITIONS.map(t=>`<option>${t}</option>`).join("")}</select>`;
+  const btns=p.bundle?`<div class="btnrow"><button class="btn">Open 1</button><button class="btn ghost b5">Open ${p.bundle}</button></div>`:`<button class="btn">Open</button>`;
+  d.innerHTML=`${packArt(p)}<h3>${p.name}</h3><p>${p.desc}</p>${sel}${btns}`;
+  d.querySelector(".btn").onclick=()=>startPack(p);
+  if(p.bundle) d.querySelector(".b5").onclick=()=>startPack(p,p.bundle);
+  d.querySelector(".pack").onclick=()=>startPack(p);
+  storeEl.appendChild(d);
+});
+$("oddstable").innerHTML=`<tr><th>Pack</th>${BUCKETS.map(b=>`<th>${b}</th>`).join("")}</tr>`+
+  PACKS.map(p=>`<tr><td>${p.name.replace(" Pack","")}</td>${p.w.map(x=>`<td>${x?x+"%":"–"}</td>`).join("")}</tr>`).join("");
+
+/* ---------- history ---------- */
+let hist=[]; try{ hist=JSON.parse(localStorage.getItem("po-hist")||"[]"); }catch(e){}
+function renderHist(){
+  $("hist").innerHTML=hist.length?hist.map(h=>`<li><span class="o">${h.o}</span><span>${h.n} · ${h.pos} · ${h.team}</span><span class="p">${h.pack}</span></li>`).join("")
+    :`<li style="color:var(--muted)">No pulls yet.</li>`;
+}
+$("clearhist").onclick=()=>{ hist=[]; try{localStorage.removeItem("po-hist");}catch(e){} renderHist(); };
+renderHist();
+
+/* ---------- opening flow ---------- */
+let cur=null, curOpt=null, curLabel=null, pulled=[], busy=false, bundle=null;
+function startPack(p,n,keep){
+  if(!keep) bundle=n?{n,i:1,all:[]}:null;
+  let opt=null, label=null;
+  if(p.pick==="team"){ opt=$("sel-team").value||Object.keys(TEAMS)[Math.floor(Math.random()*32)]; label=opt; }
+  if(p.pick==="pos"){ opt=$("sel-pos").value||POSITIONS[Math.floor(Math.random()*9)]; label=opt; }
+  cur=p; curOpt=opt; curLabel=label; pulled=drawPack(p,opt); busy=false;
+  $("storeview").style.display="none"; $("stage").style.display="flex";
+  $("stagetitle").textContent=(label?`${label} ${p.pick==="team"?"Team":"Position"} Pack`:p.name)+(bundle?` · ${bundle.i} of ${bundle.n}`:"");
+  $("packzone").style.display="flex"; $("taphint").style.display="block";
+  $("bigpackwrap").innerHTML=packArt(p,label); const bp=$("bigpackwrap").firstChild; bp.id="bigpack"; bp.onclick=openPack;
+  ["cards","actions","summary","after"].forEach(id=>$(id).style.display="none"); $("cards").innerHTML="";
+  window.scrollTo(0,0);
+}
+function openPack(){
+  if(busy) return; busy=true;
+  const bp=$("bigpack"); $("taphint").style.display="none";
+  bp.classList.add("shake"); sfx.shake();
+  const top=pulled[pulled.length-1], bc=top&&top.o>=85?TIERCOLOR[tier(top.o)]:"#ffffff";
+  setTimeout(()=>{
+    const art=packArt(cur,curLabel), w=$("bigpackwrap");
+    w.innerHTML=`<div class="burst" style="--bc:${bc}"></div><div class="peek"></div><div class="piece bot">${art}</div><div class="piece top">${art}</div>`;
+    sfx.rip(); try{ navigator.vibrate&&navigator.vibrate(60); }catch(e){}
+  },760);
+  setTimeout(flash,1500);
+  setTimeout(dealCards,1620);
+}
+function flash(){ const f=$("flash"); f.classList.remove("go"); void f.offsetWidth; f.classList.add("go"); }
+
+function initials(n){ const p=n.replace(/ (Jr\.|Sr\.|II|III|IV)$/,"").split(" "); return (p[0][0]+p[p.length-1][0]).toUpperCase(); }
+function cardFront(p){
+  const t=tier(p.o);
+  return `<div class="face front${p.o>=90?" shiny":""}${t==="legend"?" legend":""}" style="--team:${p.color};--tc:${TIERCOLOR[t]}">
+        <div class="ctop"><div><div class="ovr">${p.o}</div><div class="pos">${p.pos}</div></div><div class="tier"><b>${TIERNAME[t]}</b><br>#${p.j} · Age ${p.a}<br>${p.sp} SPD</div></div>
+        <div class="mono"><span>${initials(p.n)}</span></div>
+        <div class="cbot"><div class="nm">${p.n}</div><div class="tm">${p.team}</div></div>
+      </div>`;
+}
+function dealCards(){
+  $("packzone").style.display="none";
+  const wrap=$("cards"); wrap.style.display="flex"; wrap.innerHTML="";
+  pulled.forEach((p,i)=>{
+    const t=tier(p.o), c=document.createElement("div");
+    c.className="card"; c.style.animationDelay=(i*0.13)+"s"; c.style.setProperty("--glow",TIERCOLOR[t]);
+    const hint=p.o>=85?` hint" style="--hint:${TIERCOLOR[t]}`:"";
+    c.innerHTML=`<div class="inner">
+      <div class="face back${hint}">🏈</div>
+      ${cardFront(p)}</div>`;
+    c.onclick=()=>reveal(i);
+    wrap.appendChild(c);
+    setTimeout(()=>tone(300+i*40,0.06,"square",0.04),i*130);
+  });
+  $("actions").style.display="flex"; busy=false;
+}
+function reveal(i,quick){
+  const c=$("cards").children[i]; if(!c||c.classList.contains("flip")||busy) return;
+  const p=pulled[i];
+  const doFlip=()=>{ c.classList.add("flip"); if(p.o>=80) c.classList.add("glow"); sfx.flip(p.o); if(p.o>=90){ sfx.big(); confetti(TIERCOLOR[tier(p.o)]); } else if(p.o>=85){ confetti(TIERCOLOR[tier(p.o)]); } checkDone(); };
+  if(p.o>=85 && !quick) walkout(p,doFlip); else doFlip();
+}
+$("next").onclick=()=>{ const i=[...$("cards").children].findIndex(c=>!c.classList.contains("flip")); if(i>=0) reveal(i); };
+$("all").onclick=()=>{ [...$("cards").children].forEach((c,i)=>setTimeout(()=>reveal(i,true),i*160)); };
+
+function checkDone(){
+  const cards=[...$("cards").children]; if(cards.some(c=>!c.classList.contains("flip"))) return;
+  $("actions").style.display="none";
+  const by=(f)=>[...pulled].sort(f);
+  const best=by((a,b)=>b.o-a.o), old=by((a,b)=>b.a-a.a||b.o-a.o)[0], young=by((a,b)=>a.a-b.a||b.o-a.o)[0];
+  const off=best.find(p=>OFF.includes(p.g)), def=best.find(p=>DEF.includes(p.g));
+  const fast=by((a,b)=>b.sp-a.sp||b.o-a.o)[0];
+  const f=p=>p?`<b>${p.n}</b> · ${p.o} ${p.pos} · ${p.team}`:"None in this pack";
+  cards[pulled.indexOf(best[0])].classList.add("best");
+  $("summary").innerHTML=`<table>
+    <tr><td>Best player</td><td>${f(best[0])}</td></tr>
+    <tr><td>2nd best</td><td>${f(best[1])}</td></tr>
+    <tr><td>Oldest</td><td>${f(old)} · age ${old.a}</td></tr>
+    <tr><td>Youngest</td><td>${f(young)} · age ${young.a}</td></tr>
+    <tr><td>Fastest</td><td>${f(fast)} · ${fast.sp} speed</td></tr>
+    <tr><td>Best offense</td><td>${f(off)}</td></tr>
+    <tr><td>Best defense</td><td>${f(def)}</td></tr></table>`;
+  if(bundle){
+    bundle.all.push(...pulled);
+    const top=[...bundle.all].sort((a,b)=>b.o-a.o);
+    $("summary").innerHTML+=`<table style="margin-top:8px;border-top:2px solid var(--chalk)">
+      <tr><td>Best of ${bundle.i} pack${bundle.i>1?"s":""}</td><td>${f(top[0])}</td></tr>
+      <tr><td>2nd best overall</td><td>${f(top[1])}</td></tr></table>`;
+    $("again").textContent=bundle.i<bundle.n?`Next pack (${bundle.i+1} of ${bundle.n})`:`Open ${bundle.n} more`;
+  } else $("again").textContent="Open another";
+  $("summary").style.display="block"; $("after").style.display="flex";
+  const label=$("stagetitle").textContent.replace(" Pack","");
+  hist=[...best.map(p=>({n:p.n,pos:p.pos,o:p.o,team:p.team,pack:label})),...hist].slice(0,100);
+  try{ localStorage.setItem("po-hist",JSON.stringify(hist)); }catch(e){}
+  renderHist();
+}
+function backToStore(){ $("stage").style.display="none"; $("storeview").style.display="block"; window.scrollTo(0,0); }
+$("back").onclick=backToStore; $("back2").onclick=backToStore;
+$("again").onclick=()=>{
+  if(bundle&&bundle.i<bundle.n){ bundle.i++; startPack(cur,0,true); }
+  else startPack(cur,bundle?bundle.n:0);
+};
+
+/* ---------- walkout reveal for 85+ ---------- */
+let woTimers=[];
+function quake(){ document.body.classList.remove("quake"); void document.body.offsetWidth; document.body.classList.add("quake"); try{ navigator.vibrate&&navigator.vibrate([80,40,120]); }catch(e){} }
+function walkout(p,done){
+  busy=true;
+  const wo=$("wo"), t=tier(p.o), big=p.o>=90, gap=big?1000:800;
+  wo.style.setProperty("--wc",TIERCOLOR[t]); wo.classList.toggle("big",big);
+  wo.style.background=`radial-gradient(circle at 50% 45%,${p.color} 0%,#050505 ${big?80:68}%)`;
+  wo.style.display="flex";
+  const steps=[["wo-pos",p.pos],["wo-team",p.team],["wo-ovr",p.o],["wo-name",p.n]];
+  if(big) steps.unshift(["wo-intro",p.o>=95?"🚨 Legend pull 🚨":"🔥 Big pull 🔥"]);
+  ["wo-intro","wo-pos","wo-team","wo-ovr","wo-name"].forEach(id=>{ const e=$(id); e.classList.remove("on"); e.textContent=""; });
+  let ended=false;
+  const finish=()=>{ if(ended) return; ended=true; woTimers.forEach(clearTimeout); woTimers=[]; wo.style.display="none"; wo.onclick=null; flash();
+    if(big) showcase(p,()=>{ busy=false; done(); }); else { busy=false; done(); } };
+  if(big){ sfx.drum(); quake(); }
+  steps.forEach(([id,txt],i)=>woTimers.push(setTimeout(()=>{
+    const e=$(id); e.textContent=txt; e.classList.add("on"); sfx.step(i+5-steps.length);
+    if(big&&(id==="wo-ovr"||id==="wo-name")){ quake(); confetti(TIERCOLOR[t]); }
+    if(big&&id==="wo-team") sfx.drum();
+  },350+i*gap)));
+  woTimers.push(setTimeout(finish,350+steps.length*gap+800));
+  wo.onclick=finish;
+}
+function showcase(p,done){
+  const sh=$("show"), t=tier(p.o);
+  sh.style.background=`radial-gradient(circle at 50% 45%,${p.color} 0%,#000 85%)`;
+  sh.innerHTML=`<div class="lbl">${p.o>=95?"Legend pull!":"Big pull!"}</div><div class="showcard">${cardFront(p)}</div><div class="skip">Tap to continue</div>`;
+  sh.style.display="flex"; sfx.big();
+  const ts=[0,450,900,1500].map(d=>setTimeout(()=>confetti(TIERCOLOR[t]),d));
+  ts.push(setTimeout(()=>{ quake(); sfx.big(); },1150));
+  sh.onclick=()=>{ ts.forEach(clearTimeout); sh.style.display="none"; sh.onclick=null; done(); };
+}
+
+/* ---------- confetti ---------- */
+const fx=$("fx"), fctx=fx.getContext("2d"); let parts=[], raf=null;
+function confetti(color){
+  fx.width=innerWidth; fx.height=innerHeight;
+  const cols=[color,"#ffffff","#ffc83d"];
+  for(let i=0;i<110;i++) parts.push({x:innerWidth/2,y:innerHeight*0.45,vx:(Math.random()-0.5)*16,vy:-Math.random()*14-3,s:4+Math.random()*6,c:cols[i%3],r:Math.random()*6,life:90+Math.random()*40});
+  if(!raf) raf=requestAnimationFrame(tick);
+}
+function tick(){
+  fctx.clearRect(0,0,fx.width,fx.height);
+  parts.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; p.vy+=0.38; p.vx*=0.985; p.r+=0.2; p.life--;
+    fctx.save(); fctx.translate(p.x,p.y); fctx.rotate(p.r); fctx.globalAlpha=Math.max(0,Math.min(1,p.life/40)); fctx.fillStyle=p.c; fctx.fillRect(-p.s/2,-p.s/3,p.s,p.s*0.66); fctx.restore(); });
+  parts=parts.filter(p=>p.life>0&&p.y<fx.height+40);
+  raf=parts.length?requestAnimationFrame(tick):(fctx.clearRect(0,0,fx.width,fx.height),null);
+}
+
+})();
+</script>
+<script>
+document.getElementById("vw").onclick=()=>window.showView("wheels");
+document.getElementById("vp").onclick=()=>window.showView("packs");
+window.addEventListener("hashchange",()=>{ if(location.hash==="#packs"&&window.curView!=="packs") window.showView("packs"); });
+if(window.curView==="packs") window.showView("packs");
+</script>
+</body>
+</html>
