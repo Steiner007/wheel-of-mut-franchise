@@ -15,3 +15,7 @@ Everything is in one file: open `index.html` in a browser. No build step, no ser
 Player names, teams, ratings, ages, speed and jersey numbers come from a Madden NFL 26 roster export (late-season ratings update, players rated 60+). Ratings are EA's. Use the rating in your own franchise file when the two disagree.
 
 Fan-made. Not affiliated with the NFL or EA.
+
+## Also in this repo: Lincoln's WR Academy
+
+`wr-academy/` is a separate app: a phone-first football training game for young wide receivers (drills, ratings out of 99, places out of 100, challenges, seasons, strength work). It's live at https://steiner007.github.io/wheel-of-mut-franchise/wr-academy/ and can be added to the iPhone home screen (Safari → Share → Add to Home Screen) with its own icon. Data saves on the device.
