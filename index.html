@@ -306,6 +306,42 @@
   .spick{display:flex;flex-wrap:wrap;gap:5px}
   .spick .sp{font-family:Oswald,sans-serif;font-size:13px;padding:5px 9px;border-radius:6px;border:1px solid var(--line);background:var(--dark);color:var(--chalk);cursor:pointer}
   .spick .sp.on{background:var(--gold);color:#1a1205;border-color:var(--chalk)}
+  .views button{font-size:15px;letter-spacing:1px}
+  .gohist{display:block;margin:10px auto 4px;font-size:14px}
+  .hh{font-family:Oswald,sans-serif;text-transform:uppercase;letter-spacing:1px;color:var(--gold);margin:4px 0 10px;font-size:22px}
+  .hbar input{width:100%;font:inherit;font-size:16px;padding:9px 11px;border-radius:8px;border:1px solid var(--line);background:var(--dark);color:var(--chalk)}
+  .hfilt{display:flex;gap:6px;overflow-x:auto;margin:10px 0;scrollbar-width:none}
+  .hfilt .hf{flex:0 0 auto;font-family:Oswald,sans-serif;font-size:13px;text-transform:uppercase;padding:6px 10px;border-radius:6px;border:1px solid var(--line);background:var(--dark);color:var(--chalk);cursor:pointer}
+  .hfilt .hf.on{background:var(--gold);color:#1a1205;border-color:var(--chalk)}
+  .hcard{margin:0 0 10px;padding:0;background:var(--dark);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .hcard summary{display:flex;align-items:center;gap:10px;padding:10px 12px;list-style:none;cursor:pointer;color:var(--chalk);font-family:Barlow,sans-serif;text-transform:none;letter-spacing:0}
+  .hcard summary::-webkit-details-marker{display:none}
+  .hcard[open] summary{border-bottom:1px solid var(--line)}
+  .hi{font-size:24px}
+  .hs{flex:1;display:flex;flex-direction:column;line-height:1.25}
+  .hs b{font-family:Oswald,sans-serif;font-size:17px;text-transform:uppercase;letter-spacing:.5px}
+  .hs small{color:var(--muted);font-size:12.5px}
+  .htot{display:flex;flex-direction:column;align-items:flex-end;font-family:Oswald,sans-serif;font-weight:700;font-size:20px;line-height:1.05}
+  .htot small{font-family:Barlow,sans-serif;font-weight:400;font-size:11px;color:var(--muted)}
+  .hbody{padding:8px 12px 10px}
+  .hrow{padding:7px 0;border-top:1px solid var(--line)}
+  .hrow:first-of-type{border-top:none}
+  .hrow.gift .hrt{color:#ffb38a}
+  .hrt{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:15px}
+  .hrt .hn{font-family:Oswald,sans-serif;color:var(--muted);min-width:14px}
+  .hrt .hp{margin-left:auto;font-family:Oswald,sans-serif;font-weight:700;font-size:16px}
+  .hd{font-size:13.5px;color:var(--muted);margin-top:3px;line-height:1.35}
+  .hd.hnote{color:var(--gold)}
+  .htop{font-size:13.5px;margin-top:5px;display:flex;flex-direction:column;gap:2px;background:#0d2a1a;border-radius:6px;padding:6px 8px}
+  .htop b{color:var(--gold)}
+  .hmeta{font-size:13px;color:var(--muted);margin-top:6px}
+  .hact{display:flex;gap:8px;align-items:center;margin-top:10px}
+  .hwho{flex:1;font:inherit;font-size:15px;padding:6px 9px;border-radius:6px;border:1px solid var(--line);background:#0d2a1a;color:var(--chalk)}
+  .hempty{color:var(--muted);text-align:center;padding:30px 10px}
+  .hfoot{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+  .hfoot .btn{font-size:14px;padding:8px 14px}
+  #hexport{width:100%;min-height:160px;margin-top:10px;font:13px/1.4 ui-monospace,monospace;background:#0d2a1a;color:var(--chalk);border:1px solid var(--line);border-radius:8px;padding:8px}
+  #view-history main{padding-top:10px}
 /* ---- combined shell ---- */
   header{text-align:left}
   .views{display:flex;gap:8px;padding:10px 12px;background:var(--dark);border-bottom:1px solid var(--line)}
@@ -321,7 +357,7 @@
   <h1>🏈 Wheel of <span>MUT</span> Franchise</h1>
   <button class="ibtn" id="mute">🔊 Sound</button>
 </header>
-<div class="views"><button id="vw" class="on">🎡 Wheels</button><button id="vp">📦 Packs</button></div>
+<div class="views"><button id="vw" class="on">🎡 Wheels</button><button id="vp">📦 Packs</button><button id="vh">📜 History</button></div>
 
 <div id="view-wheels">
 <nav id="tabs"></nav>
@@ -342,9 +378,10 @@
   </details>
 
   <details>
-    <summary>Spin history</summary>
+    <summary>Recent spins</summary>
     <ul class="log" id="log"></ul>
-    <button class="small" id="clearLog">Clear history</button>
+    <button class="btn gohist" id="openHist">📜 Open full history</button>
+    <button class="small" id="clearLog">Clear recent list</button>
   </details>
 
   <details>
@@ -409,6 +446,23 @@
 </main>
 </div>
 
+<div id="view-history" style="display:none">
+<main>
+  <h2 class="hh">📜 Spin history</h2>
+  <div class="hbar">
+    <input id="hsearch" type="search" placeholder="Search: player, slice, position…">
+  </div>
+  <div class="hfilt" id="hfilt"></div>
+  <div id="hlist"></div>
+  <div class="hfoot">
+    <button class="btn ghost" id="hcopy">📋 Copy history</button>
+    <button class="btn ghost" id="hclear">🗑 Clear all</button>
+  </div>
+  <textarea id="hexport" readonly style="display:none"></textarea>
+  <p class="fine">History is saved on this phone/browser only. Up to 300 entries are kept.</p>
+</main>
+</div>
+
 <div id="view-packs" style="display:none">
 <main>
   <section id="storeview">
@@ -456,14 +510,15 @@
 
 
 <script>
-window.curView=location.hash==="#packs"?"packs":"wheels";
+window.curView=location.hash==="#packs"?"packs":location.hash==="#history"?"history":"wheels";
 window.showView=function(v){
   window.curView=v;
-  document.getElementById("view-wheels").style.display=v==="wheels"?"block":"none";
-  document.getElementById("view-packs").style.display=v==="packs"?"block":"none";
-  document.getElementById("vw").classList.toggle("on",v==="wheels");
-  document.getElementById("vp").classList.toggle("on",v==="packs");
-  try{ history.replaceState(null,"",v==="packs"?"#packs":"#"+(window.curWheel||"weekly")); }catch(e){}
+  [["wheels","vw"],["packs","vp"],["history","vh"]].forEach(([k,b])=>{
+    document.getElementById("view-"+k).style.display=v===k?"block":"none";
+    document.getElementById(b).classList.toggle("on",v===k);
+  });
+  if(v==="history"&&window.renderHistory) window.renderHistory();
+  try{ history.replaceState(null,"",v==="wheels"?"#"+(window.curWheel||"weekly"):"#"+v); }catch(e){}
   window.scrollTo(0,0);
 };
 </script>
@@ -739,9 +794,28 @@ function wireSugg(root){
   });
   const on=root.querySelector(".sp.on"); if(on&&root.querySelector(".slist")) on.click();
 }
+function snapTop(trait,pos){
+  const t=TRAIT_SORT[trait]; if(!t) return null;
+  return {lbl:t[3],pos,list:topTrait(trait,pos,3).list.map(p=>({n:p.n,pos:p.pos,team:p.team,v:String(t[2](p)),o:p.o}))};
+}
 const TURN_KEY="wom-turn-v1";
 let turn=null; try{ turn=JSON.parse(localStorage.getItem(TURN_KEY)||"null"); }catch(e){ turn=null; }
-const saveTurn=()=>{ try{ localStorage.setItem(TURN_KEY,JSON.stringify(turn)); }catch(e){} };
+const HIST_KEY="wom-hist-v1", HIST_MAX=300;
+let HIST=[]; try{ HIST=JSON.parse(localStorage.getItem(HIST_KEY)||"[]"); }catch(e){ HIST=[]; }
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const saveHist=()=>{ HIST=HIST.slice(0,HIST_MAX); try{ localStorage.setItem(HIST_KEY,JSON.stringify(HIST)); }catch(e){} };
+function recordTurn(t){
+  if(!t) return;
+  if(!t.id){ t.id=uid(); t.ts=t.ts||Date.now(); }
+  const st=tstats(t);
+  const rec={id:t.id,ts:t.ts,kind:"turn",wheel:t.wheel,res:t.res||null,cb:t.cb||0,
+    e:JSON.parse(JSON.stringify(t.e)),total:st.total,bonus:st.bonus,firstTwo:st.firstTwo,allowed:st.allowed,complete:st.complete};
+  const k=HIST.findIndex(h=>h.id===t.id);
+  if(k>=0){ rec.who=HIST[k].who||""; HIST[k]=rec; } else HIST.unshift(rec);
+  saveHist();
+}
+function recordSpin(wheel,x,extra){ HIST.unshift(Object.assign({id:uid(),ts:Date.now(),kind:"spin",wheel,icon:x.e,t:x.t,k:x.k,desc:x.b,note:x.n||""},extra||{})); saveHist(); }
+const saveTurn=()=>{ if(turn&&!turn.id){ turn.id=uid(); turn.ts=Date.now(); } try{ localStorage.setItem(TURN_KEY,JSON.stringify(turn)); }catch(e){} if(turn) recordTurn(turn); };
 function tstats(t){
   if(!t) return null;
   const pending=t.e.find(x=>x.power==null)||null;
@@ -892,18 +966,18 @@ function spin(){
 function wireGo(res){
   res.querySelectorAll(".gonext").forEach(b=>b.onclick=()=>select(b.dataset.go));
   const gp=res.querySelector(".gopacks"); if(gp) gp.onclick=()=>window.showView("packs");
-  const ud=res.querySelector(".undo"); if(ud) ud.onclick=()=>{ if(turn&&turn.e.length){ turn.e.pop(); saveTurn(); renderTurn(); res.className="result empty"; res.textContent="Spin removed. Tap SPIN"; } };
+  const ud=res.querySelector(".undo"); if(ud) ud.onclick=()=>{ if(turn&&turn.e.length){ turn.e.pop(); saveTurn(); if(!turn.e.length){ HIST=HIST.filter(h=>h.id!==turn.id); saveHist(); } renderTurn(); res.className="result empty"; res.textContent="Spin removed. Tap SPIN"; } };
 }
 function show(x){
   const res=document.getElementById("result");
   res.className="result pop";
-  let pw="", flow="", msg="", logp="";
+  let pw="", flow="", msg="", logp="", consumed=false;
   if(current==="position") lastPos=x.t;
   if(current==="weekly"||current==="playoff"){
     const bo=baseOf(current,x.t);
     if(!turn||turn.wheel!==current||tstats(turn).complete) turn={wheel:current,e:[]};
     const before=tstats(turn);
-    const ent={t:x.t,b:bo?bo.b:5,need:bo?bo.need:null,pos:null,trait:null,power:null};
+    const ent={t:x.t,icon:x.e,desc:x.b,note:x.n||"",b:bo?bo.b:5,need:bo?bo.need:null,pos:null,trait:null,power:null};
     if(!ent.need) ent.power=powerOf(ent.b);
     turn.e.push(ent); saveTurn();
     const after=tstats(turn);
@@ -914,14 +988,18 @@ function show(x){
   } else if(current==="position"||current==="trait"){
     const st=turn&&tstats(turn), pend=st&&st.pending;
     if(current==="position"&&pend&&!pend.pos){
+      consumed=true;
       const before=tstats(turn);
       pend.pos=x.t;
       if(pend.need==="trait"){ pw=`<div class="pinfo">Position weight <b>×${fmt(x.t==="Your Choice"?Math.max(...POS_LIST.map(p=>POS_W[p])):POS_W[x.t])}</b> for <b>${pend.t}</b></div>`; flow=goBtn("trait","Spin the Trait Wheel"); }
       else { pend.power=powerOf(pend.b,pend.pos); pw=meter(pend.power,`${pend.t} · ${breakdown(pend)}`); logp=` ⚡${pend.power}`; msg=bonusMsg(before,tstats(turn))+doneMsg(tstats(turn)); flow=goBtn(turn.wheel,"Back to "+WHEELS[turn.wheel].name); }
       saveTurn();
     } else if(current==="trait"&&pend&&pend.need==="trait"&&pend.pos&&!pend.trait){
+      consumed=true;
       const before=tstats(turn);
-      pend.trait=x.t; pend.power=powerOf(pend.b,pend.pos,pend.trait); saveTurn();
+      pend.trait=x.t; pend.power=powerOf(pend.b,pend.pos,pend.trait);
+      if(pend.pos!=="Your Choice") pend.top=snapTop(x.t,pend.pos);
+      saveTurn();
       pw=meter(pend.power,`${pend.pos==="Your Choice"?"your pick":pend.pos} · ${x.t} · ${breakdown(pend)}`)+suggestHTML(x.t,pend.pos); logp=` ⚡${pend.power}`;
       msg=bonusMsg(before,tstats(turn))+doneMsg(tstats(turn)); flow=goBtn(turn.wheel,"Back to "+WHEELS[turn.wheel].name);
     } else if(current==="position"){
@@ -934,10 +1012,81 @@ function show(x){
   res.innerHTML=`<div class="rtitle"><span>${x.e}</span><span>${x.t}</span>${tagHTML(x.k)}</div>
     ${pw}<div class="rbody">${x.b}</div>${x.n?`<div class="rnote">${x.n}</div>`:""}${msg}${flow}${/pack/i.test(x.t+" "+x.b+" "+(x.n||""))?`<button class="btn gopacks">📦 Go to packs</button>`:""}`;
   wireGo(res); wireSugg(res); renderTurn();
+  if(current!=="weekly"&&current!=="playoff"&&!consumed){
+    const extra={};
+    if(current==="trait"&&lastPos&&lastPos!=="Your Choice"){ extra.pos=lastPos; extra.top=snapTop(x.t,lastPos); }
+    recordSpin(current,x,extra);
+  }
   log.unshift({w:WHEELS[current].name,e:x.e,t:x.t+logp}); log=log.slice(0,60);
   try{ localStorage.setItem(LOG_KEY,JSON.stringify(log)); }catch(e){}
   renderLog();
 }
+
+let hFilter="all", hQuery="", hClearArm=0;
+const esc=v=>String(v==null?"":v).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const when=ts=>{ try{ return new Date(ts).toLocaleString([], {weekday:"short",month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}); }catch(e){ return ""; } };
+const wname=k=>(WHEELS[k]&&WHEELS[k].name)||k;
+const wicon=k=>(WHEELS[k]&&WHEELS[k].icon)||"🎡";
+function topHTML(top){
+  if(!top||!top.list||!top.list.length) return "";
+  return `<div class="htop">Top ${top.pos}s by ${esc(top.lbl.toLowerCase())}: ${top.list.map((p,i)=>`<span>${i+1}. <b>${esc(p.n)}</b> (${esc(p.v)} ${esc(top.lbl.toLowerCase())}, ${p.o} OVR, ${esc(p.team)})</span>`).join("")}</div>`;
+}
+function turnCard(h,open){
+  const r=h.res?RESULTS[h.res]:null, kind=i=>i<2?"":i-2<(h.cb||0)?"Comeback":"Bonus";
+  const rows=(h.res==="streak"?`<div class="hrow gift"><div class="hrt">🎁 Streak breaker: 1 Silver Pack <span class="hp" style="color:${PCOLOR(STREAK_PACK_POWER)}">⚡${STREAK_PACK_POWER}</span></div></div>`:"")+
+    h.e.map((x,i)=>`<div class="hrow"><div class="hrt"><span class="hn">${i+1}</span>${kind(i)?`<small class="kd">${kind(i)}</small>`:""}${esc(x.icon||"")} <b>${esc(x.t)}</b>${x.pos?` · ${esc(x.pos)}`:""}${x.trait?` · ${esc(x.trait)}`:""}<span class="hp" style="color:${x.power==null?"var(--muted)":PCOLOR(x.power)}">⚡${x.power??"?"}</span></div>${x.desc?`<div class="hd">${esc(x.desc)}</div>`:""}${x.note?`<div class="hd hnote">${esc(x.note)}</div>`:""}${topHTML(x.top)}</div>`).join("");
+  const bonusLine=h.firstTwo!=null?`<div class="hmeta">First 2 spins ⚡${h.firstTwo} → ${h.bonus?`+${h.bonus} bonus spin${h.bonus>1?"s":""}`:"no bonus"}</div>`:"";
+  return `<details class="hcard"${open?" open":""}><summary><span class="hi">${wicon(h.wheel)}</span><span class="hs"><b>${wname(h.wheel)} turn${h.who?` · ${esc(h.who)}`:""}</b><small>${when(h.ts)}${r?` · ${r.icon} ${r.short}`:""}${h.complete?"":" · in progress"}</small></span><span class="htot" style="color:${PCOLOR(Math.round(h.total/Math.max(1,h.e.length)))}">⚡${h.total}<small>${h.e.length} spin${h.e.length===1?"":"s"}</small></span></summary>
+    <div class="hbody">${r?`<div class="tres r-${h.res}">${r.icon} ${r.short}: <b>${r.give}</b></div>`:""}${rows}${bonusLine}
+    <div class="hact"><input class="hwho" data-id="${h.id}" placeholder="Whose turn? (name)" value="${esc(h.who||"")}"><button class="ibtn hdel" data-id="${h.id}">Delete</button></div></div></details>`;
+}
+function spinCard(h,open){
+  return `<details class="hcard"${open?" open":""}><summary><span class="hi">${esc(h.icon||wicon(h.wheel))}</span><span class="hs"><b>${esc(h.t)}</b><small>${wname(h.wheel)} · ${when(h.ts)}</small></span></summary>
+    <div class="hbody">${h.desc?`<div class="hd">${esc(h.desc)}</div>`:""}${h.note?`<div class="hd hnote">${esc(h.note)}</div>`:""}${topHTML(h.top)}
+    <div class="hact"><span></span><button class="ibtn hdel" data-id="${h.id}">Delete</button></div></div></details>`;
+}
+const HFILTERS=[["all","All"],["turn","Weekly & Playoff"],["chal","Challenges"],["other","Other wheels"]];
+function hMatch(h){
+  if(hFilter==="turn"&&h.kind!=="turn") return false;
+  if(hFilter==="chal"&&!(h.kind==="spin"&&(h.wheel==="challenge"||h.wheel==="seasonchal"))) return false;
+  if(hFilter==="other"&&!(h.kind==="spin"&&h.wheel!=="challenge"&&h.wheel!=="seasonchal")) return false;
+  if(h.kind==="turn"&&!h.e.length) return false;
+  if(hQuery){ const blob=JSON.stringify(h).toLowerCase()+" "+wname(h.wheel).toLowerCase(); if(!hQuery.split(/\s+/).every(w=>blob.includes(w))) return false; }
+  return true;
+}
+function renderHistory(){
+  document.getElementById("hfilt").innerHTML=HFILTERS.map(([k,l])=>`<button class="hf${k===hFilter?" on":""}" data-f="${k}">${l}</button>`).join("");
+  document.querySelectorAll("#hfilt .hf").forEach(b=>b.onclick=()=>{ hFilter=b.dataset.f; renderHistory(); });
+  const list=HIST.filter(hMatch);
+  const el=document.getElementById("hlist");
+  el.innerHTML=list.length?list.map((h,i)=>h.kind==="turn"?turnCard(h,i===0):spinCard(h,i===0)).join(""):`<div class="hempty">${HIST.length?"Nothing matches.":"No spins saved yet. Spin a wheel and it shows up here."}</div>`;
+  el.querySelectorAll(".hdel").forEach(b=>b.onclick=()=>{ HIST=HIST.filter(h=>h.id!==b.dataset.id); saveHist(); renderHistory(); });
+  el.querySelectorAll(".hwho").forEach(inp=>inp.onchange=()=>{ const h=HIST.find(x=>x.id===inp.dataset.id); if(h){ h.who=inp.value.trim().slice(0,30); saveHist(); renderHistory(); } });
+  document.getElementById("hclear").textContent="🗑 Clear all"; hClearArm=0;
+}
+window.renderHistory=renderHistory;
+function histText(){
+  return HIST.filter(hMatch).map(h=>{
+    if(h.kind==="turn"){
+      const r=h.res?RESULTS[h.res]:null;
+      return `${when(h.ts)} · ${wname(h.wheel)} turn${h.who?` (${h.who})`:""}${r?` · ${r.short}: ${r.give}`:""} · total ⚡${h.total}\n`+(h.res==="streak"?`  🎁 Streak breaker Silver Pack ⚡${STREAK_PACK_POWER}\n`:"")+
+        h.e.map((x,i)=>`  ${i+1}. ${x.t}${x.pos?` · ${x.pos}`:""}${x.trait?` · ${x.trait}`:""} ⚡${x.power??"?"}${x.top&&x.top.list[0]?` → ${x.top.list[0].n} (${x.top.list[0].v} ${x.top.lbl.toLowerCase()}, ${x.top.list[0].o} OVR)`:""}`).join("\n");
+    }
+    return `${when(h.ts)} · ${wname(h.wheel)}: ${h.t}${h.note?` (${h.note})`:""}`;
+  }).join("\n\n");
+}
+document.getElementById("hsearch").oninput=e=>{ hQuery=e.target.value.trim().toLowerCase(); renderHistory(); };
+document.getElementById("hcopy").onclick=async()=>{
+  const txt=histText()||"No spins saved yet.", ta=document.getElementById("hexport");
+  try{ await navigator.clipboard.writeText(txt); document.getElementById("hcopy").textContent="✅ Copied"; setTimeout(()=>document.getElementById("hcopy").textContent="📋 Copy history",1600); ta.style.display="none"; }
+  catch(e){ ta.value=txt; ta.style.display="block"; ta.focus(); ta.select(); document.getElementById("hcopy").textContent="Select & copy below"; }
+};
+document.getElementById("hclear").onclick=()=>{
+  const b=document.getElementById("hclear");
+  if(!hClearArm){ hClearArm=1; b.textContent="Tap again to clear everything"; setTimeout(()=>{ if(hClearArm){ hClearArm=0; b.textContent="🗑 Clear all"; } },3000); return; }
+  HIST=[]; saveHist(); renderHistory();
+};
+document.getElementById("openHist").onclick=()=>window.showView("history");
 
 function renderLog(){
   document.getElementById("log").innerHTML = log.length
@@ -1283,8 +1432,9 @@ function tick(){
 <script>
 document.getElementById("vw").onclick=()=>window.showView("wheels");
 document.getElementById("vp").onclick=()=>window.showView("packs");
-window.addEventListener("hashchange",()=>{ if(location.hash==="#packs"&&window.curView!=="packs") window.showView("packs"); });
-if(window.curView==="packs") window.showView("packs");
+document.getElementById("vh").onclick=()=>window.showView("history");
+window.addEventListener("hashchange",()=>{ const v=location.hash.slice(1); if((v==="packs"||v==="history")&&window.curView!==v) window.showView(v); });
+if(window.curView!=="wheels") window.showView(window.curView);
 </script>
 </body>
 </html>
