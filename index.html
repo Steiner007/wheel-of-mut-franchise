@@ -233,6 +233,37 @@
   .fine{color:var(--muted);font-size:12.5px;line-height:1.4;margin-top:14px;text-align:center}
   @media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition-duration:.01s!important}}
 
+/* ---- spin power ---- */
+  .pow{display:grid;grid-template-columns:auto auto auto 1fr;align-items:center;gap:4px 6px;margin:8px 0 4px}
+  .pow .bolt{font-size:22px}
+  .pow b{font-family:Oswald,sans-serif;font-size:34px;line-height:1}
+  .pow .of{font-family:Oswald,sans-serif;color:var(--muted);font-size:15px;align-self:end;padding-bottom:3px}
+  .pow .pbar{height:12px;border-radius:6px;background:#173826;overflow:hidden;border:1px solid var(--line);margin-left:6px}
+  .pow .pbar i{display:block;height:100%;border-radius:6px;transition:width .6s ease-out}
+  .pow em{grid-column:1/-1;font-style:normal;color:var(--muted);font-size:13.5px}
+  .pinfo{margin:8px 0 2px;font-size:15px;color:var(--chalk)}
+  .pinfo b{color:var(--gold)}
+  .bonus{margin-top:10px;padding:9px 11px;border-radius:8px;background:rgba(255,200,61,.14);border:2px solid var(--gold);font-weight:600;font-size:16px;animation:pop .4s ease-out}
+  .tdone{margin-top:10px;padding:8px 11px;border-radius:8px;background:rgba(123,216,143,.12);border:1px solid #7bd88f;font-weight:600}
+  .gonext{display:block;margin:12px auto 0;font-size:15px}
+  .undo{display:block;margin:10px auto 0}
+  .turn{margin:14px 0 0;background:var(--dark);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+  .thead{display:flex;align-items:center;gap:8px}
+  .thead .tl{font-family:Oswald,sans-serif;text-transform:uppercase;letter-spacing:1px;color:var(--gold);font-size:15px}
+  .thead .ts{flex:1;font-size:14px;color:var(--chalk)}
+  .thead .ibtn{font-size:11px;padding:4px 8px}
+  .chips{display:flex;flex-direction:column;gap:5px;margin-top:8px}
+  .chip{display:flex;align-items:center;gap:8px;background:#0d2a1a;border:1px solid var(--line);border-radius:7px;padding:6px 9px;font-size:14.5px}
+  .chip.wait{border-color:var(--gold)}
+  .chip.empty{opacity:.55;border-style:dashed}
+  .chip .n{font-family:Oswald,sans-serif;color:var(--muted);min-width:26px}
+  .chip .ct{flex:1}
+  .chip .cp{font-family:Oswald,sans-serif;font-weight:700;font-size:17px}
+  .tbar{position:relative;margin-top:8px;height:auto;background:#173826;border-radius:6px;overflow:hidden;border:1px solid var(--line)}
+  .tbar i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#e05a5a,#ffc83d 70%,#7bd88f);opacity:.35}
+  .tbar span{position:relative;display:block;padding:4px 8px;font-size:12px;color:var(--chalk)}
+  .odds .hd{font-family:Oswald,sans-serif;font-size:11px;text-transform:uppercase;color:var(--muted)}
+  .odds .pw{color:var(--chalk);font-size:13px;padding-left:6px}
 /* ---- combined shell ---- */
   header{text-align:left}
   .views{display:flex;gap:8px;padding:10px 12px;background:var(--dark);border-bottom:1px solid var(--line)}
@@ -260,7 +291,7 @@
     <div class="hub" id="hub">🏈</div>
   </div>
   <button class="spin" id="spinBtn">SPIN</button>
-  
+  <div class="turn" id="turn" style="display:none"></div>
   <div class="result empty" id="result">Tap SPIN</div>
 
   <details>
@@ -283,6 +314,12 @@
       <p><b>Blowout Bonus</b>: win by 21+ and spin it once.</p>
       <h3>Once a season</h3>
       <p><b>Season Challenge</b>: spin at the start. Finish it during the regular season for a Jackpot.</p>
+      <h3>Spin power &amp; bonus spins</h3>
+      <p>Every Weekly and Playoff spin gets a power rating from <b>⚡1 to ⚡10</b>. Wild Card is ⚡10 (max).</p>
+      <p><b>Position counts.</b> If the reward makes you spin the Position Wheel, its power is multiplied by the position: QB ×1.4, WR ×1.2, HB ×1.15, TE ×1.05, CB ×1.05, S ×0.9, LB ×0.9, DL ×0.85, OL ×0.75, K ×0.3, Your Choice ×1.4.</p>
+      <p><b>Traits count too.</b> On a Trait Pick, the trait has to fit the position. Fastest at WR or CB is ×1.3; Heaviest at WR is ×0.7. Highest Paid ×1.3 and Smartest ×1.2 are good everywhere; jersey numbers and ABC order are ×0.6.</p>
+      <p><b>Everyone always gets 2 spins.</b> Add up the power of those 2: <b>7 or less = 2 bonus spins</b>, <b>8–9 = 1 bonus spin</b>, 10+ = no bonus. Bonus spins don't earn more bonus spins. Example: Position Player at K (⚡2) + Position Player at WR (⚡7) = ⚡9, so you get a 3rd spin.</p>
+      <p>The page tracks your turn and tells you when you've earned a bonus spin. Tap <b>New turn</b> when the next player goes.</p>
       <h3>Win or lose</h3>
       <p><b>Win:</b> keep this week's players for the rest of the season. <b>Lose:</b> release them, unless you earned <b>Protection</b> from your challenge.</p>
             <h3>Challenge rewards</h3>
@@ -397,7 +434,7 @@ const s=(e,t,k,w,b,n)=>({e,t,k,w,b,n});
 const WHEELS = {
   weekly: {
     name:"Weekly Spin", icon:"🏈",
-    desc:"Regular season reward wheel. Each player spins 2× before every game.",
+    desc:"Regular season reward wheel. Each player gets 2 spins before every game, plus 1–2 bonus spins if those 2 are weak.",
     slices:[
       s("📦","5 Bronze Packs",P,4,"Open 5 Bronze Packs. Keep the single best player."),
       s("📦","Silver Pack",P,3,"Open 1 Silver Pack. Keep the best player."),
@@ -433,7 +470,7 @@ const WHEELS = {
   },
   playoff: {
     name:"Playoff Spin", icon:"🔥",
-    desc:"The juiced wheel. In the playoffs, each player spins this 2× before every game instead of the Weekly Spin.",
+    desc:"The juiced wheel. In the playoffs, each player gets 2 spins of this instead of the Weekly Spin, plus bonus spins if they're weak.",
     slices:[
       s("📦","Gold Pack",P,3,"Open 1 Gold Pack. Keep the 2 best players."),
       s("📦","Elite Pack",P,3,"Open 1 Elite Pack. Keep the best player."),
@@ -465,6 +502,7 @@ const WHEELS = {
       s("🏈","LB","Position",2,"Linebacker (MLB, OLB)"),
       s("🏈","CB","Position",3,"Cornerback"),
       s("🏈","S","Position",2,"Safety (FS, SS)"),
+      s("🦵","K","Position",1,"Kicker / Punter"),
       s("⭐","Your Choice",B,1,"Pick any position.")
     ]
   },
@@ -568,6 +606,90 @@ const WHEELS = {
   }
 };
 
+/* ---------- spin power ---------- */
+const POWER_BASE={
+  weekly:{"5 Bronze Packs":5,"Silver Pack":5,"Gold Pack":7,"Elite Pack":9,"Team Pack":4,"Position Pack":[5,"pos"],"Worst Position Pack":6,
+    "5 Bronze: 2 Best":7,"Silver: 2 Best":7,"Silver: Oldest":3,"Silver: Youngest":3,"Silver: Off + Def":6,
+    "75 OVR Jackpot":4,"78 OVR Jackpot":5,"80 OVR Jackpot":6,"83 OVR Jackpot":7,"86 OVR Jackpot":8,
+    "Position Player":[6,"pos"],"Team Player":6,"Free Agent":3,"Trait Pick":[6,"trait"],"Veteran (30+)":6,"Rookie / Young (24−)":6,
+    "+2 Position Upgrade":[3,"pos"],"+4 Position Upgrade":[5,"pos"],"+3 Worst Position":4,
+    "Wild Card":10,"Bonus Rookie":8,"Spin Twice":10,"Steal":8},
+  playoff:{"Gold Pack":9,"Elite Pack":9,"3 Gold Packs":10,"Worst Position Pack":8,"83 OVR Jackpot":7,"86 OVR Jackpot":8,"88 OVR Jackpot":9,"90 OVR Jackpot":10,
+    "Position Player":[8,"pos"],"Team Player":9,"+4 Position Upgrade":[5,"pos"],"+6 Position Upgrade":[7,"pos"],"+5 Worst Position":6,
+    "Wild Card":10,"Any Player":[10,"pos"]}
+};
+const POS_W={QB:1.4,WR:1.2,HB:1.15,TE:1.05,CB:1.05,S:0.9,LB:0.9,DL:0.85,OL:0.75,K:0.3};
+const POS_LIST=Object.keys(POS_W);
+const TRAIT_W={
+  "Highest Paid":{all:1.3},"Smartest":{all:1.2},"Best Rookie":{all:0.9},"Most Years Pro":{all:0.75},
+  "Oldest":{all:0.65},"Youngest":{all:0.65},
+  "Lowest Jersey #":{all:0.6},"Highest Jersey #":{all:0.6},"First in ABC Order":{all:0.6},"Last in ABC Order":{all:0.6},
+  "Fastest":{QB:0.85,HB:1.25,WR:1.3,TE:1.15,OL:0.8,DL:1.15,LB:1.15,CB:1.3,S:1.2,K:1},
+  "Quickest":{QB:0.85,HB:1.2,WR:1.2,TE:1.1,OL:0.8,DL:1.15,LB:1.1,CB:1.2,S:1.1,K:1},
+  "Most Agile":{QB:0.85,HB:1.2,WR:1.15,TE:1.05,OL:0.8,DL:1.0,LB:1.0,CB:1.15,S:1.05,K:1},
+  "Strongest":{QB:0.6,HB:1.0,WR:0.7,TE:1.0,OL:1.25,DL:1.2,LB:1.0,CB:0.7,S:0.8,K:1},
+  "Tallest":{QB:0.9,HB:0.7,WR:1.0,TE:1.0,OL:0.9,DL:0.9,LB:0.8,CB:1.0,S:0.9,K:1},
+  "Shortest":{all:0.6,HB:0.8,K:1},
+  "Heaviest":{QB:0.6,HB:0.9,WR:0.7,TE:0.8,OL:1.0,DL:0.9,LB:0.8,CB:0.7,S:0.8,K:1},
+  "Lightest":{all:0.7,QB:0.6,OL:0.6,HB:0.8,WR:0.8,TE:0.8,K:1}
+};
+const POWER_NEED=10, MAX_BONUS=2;
+const traitW=(t,pos)=>{ const r=TRAIT_W[t]||{}; return r[pos]??r.all??1; };
+function posW(pos,trait){
+  if(pos==="Your Choice") return Math.max(...POS_LIST.map(p=>POS_W[p]*(trait?traitW(trait,p):1)));
+  return (POS_W[pos]??1)*(trait?traitW(trait,pos):1);
+}
+function baseOf(wheel,title){ const v=(POWER_BASE[wheel]||{})[title]; if(v==null) return null; return Array.isArray(v)?{b:v[0],need:v[1]}:{b:v,need:null}; }
+function powerOf(b,pos,trait){ let p=b*(pos?posW(pos,trait):1); return Math.max(1,Math.min(10,Math.round(p))); }
+
+const TURN_KEY="wom-turn-v1";
+let turn=null; try{ turn=JSON.parse(localStorage.getItem(TURN_KEY)||"null"); }catch(e){ turn=null; }
+const saveTurn=()=>{ try{ localStorage.setItem(TURN_KEY,JSON.stringify(turn)); }catch(e){} };
+function tstats(t){
+  if(!t) return null;
+  const pending=t.e.find(x=>x.power==null)||null;
+  let bonus=0, firstTwo=null;
+  if(t.e.length>=2&&t.e[0].power!=null&&t.e[1].power!=null){ firstTwo=t.e[0].power+t.e[1].power; bonus=firstTwo<=7?2:firstTwo<=9?1:0; }
+  const allowed=2+bonus+2*t.e.filter(x=>x.t==="Spin Twice").length;
+  const total=t.e.reduce((a,x)=>a+(x.power||0),0);
+  return {pending,bonus,firstTwo,allowed,total,complete:!pending&&t.e.length>=allowed};
+}
+const PLABEL=p=>p>=10?"MAX":p>=9?"Huge":p>=7?"Strong":p>=5?"Solid":p>=3?"Low":"Weak";
+const PCOLOR=p=>p>=10?"#ffc83d":p>=9?"#ffb02e":p>=7?"#7bd88f":p>=5?"#4fb3e8":p>=3?"#d9a066":"#e05a5a";
+function meter(p,sub){
+  if(p==null) return `<div class="pow"><span class="bolt">⚡</span><b>?</b><span class="of">/10</span><div class="pbar"><i style="width:0"></i></div><em>${sub||""}</em></div>`;
+  return `<div class="pow"><span class="bolt">⚡</span><b style="color:${PCOLOR(p)}">${p}</b><span class="of">/10</span><div class="pbar"><i style="width:${p*10}%;background:${PCOLOR(p)}"></i></div><em>${PLABEL(p)}${sub?" · "+sub:""}</em></div>`;
+}
+const fmt=n=>(Math.round(n*100)/100).toString();
+function breakdown(x){
+  if(!x.need) return "";
+  let s=`${x.b} base × ${x.pos==="Your Choice"?"your pick":x.pos} ${fmt(x.pos==="Your Choice"?posW("Your Choice",x.trait):POS_W[x.pos])}`;
+  if(x.trait&&x.pos!=="Your Choice") s=`${x.b} base × ${x.pos} ${fmt(POS_W[x.pos])} × ${x.trait} ${fmt(traitW(x.trait,x.pos))}`;
+  return s+` = ${fmt(x.b*posW(x.pos,x.trait))}`;
+}
+function renderTurn(){
+  const el=document.getElementById("turn");
+  const show=turn&&["weekly","playoff","position","trait"].includes(current);
+  el.style.display=show?"block":"none"; if(!show) return;
+  const st=tstats(turn);
+  const chips=turn.e.map((x,i)=>`<div class="chip${x.power==null?" wait":""}"><span class="n">${i+1}${i>=2?" ★":""}</span><span class="ct">${x.t}${x.pos?` · ${x.pos==="Your Choice"?"Pick":x.pos}`:""}${x.trait?` · ${x.trait}`:""}</span><span class="cp" style="color:${x.power==null?"var(--muted)":PCOLOR(x.power)}">⚡${x.power??"?"}</span></div>`).join("");
+  const left=Math.max(0,st.allowed-turn.e.length);
+  const extra=Array.from({length:left},(_,k)=>`<div class="chip empty"><span class="n">${turn.e.length+k+1}${turn.e.length+k>=2?" ★":""}</span><span class="ct">${turn.e.length+k>=2?"Bonus spin":"Spin"}</span><span class="cp">–</span></div>`).join("");
+  const sum2=st.firstTwo==null?turn.e.slice(0,2).reduce((a,x)=>a+(x.power||0),0):st.firstTwo;
+  const status=st.complete?`✅ Turn done · total ⚡${st.total}`:st.pending?`Finish spin ${turn.e.indexOf(st.pending)+1}: spin the ${st.pending.pos?"Trait":"Position"} Wheel`:`Spin ${turn.e.length+1} of ${st.allowed}`;
+  el.innerHTML=`<div class="thead"><span class="tl">${WHEELS[turn.wheel].icon} Turn</span><span class="ts">${status}</span><button class="ibtn" id="newTurn">New turn</button></div>
+    <div class="chips">${chips}${extra}</div>
+    <div class="tbar"><i style="width:${Math.min(100,sum2*10)}%"></i><span>First 2 spins: ⚡${sum2} · 7 or less = 2 bonus spins · 8–9 = 1 bonus · 10+ = none</span></div>`;
+  document.getElementById("newTurn").onclick=()=>{ turn=null; saveTurn(); renderTurn(); const r=document.getElementById("result"); r.className="result empty"; r.textContent="New turn. Tap SPIN"; };
+}
+function goBtn(key,label){ return `<button class="btn gonext" data-go="${key}">➡ ${label}</button>`; }
+function bonusMsg(before,after){
+  if(before.firstTwo!=null||after.firstTwo==null) return "";
+  if(after.bonus===2) return `<div class="bonus">🔁 Rough start! Your first 2 spins only totaled ⚡${after.firstTwo}. You earned <b>2 bonus spins</b>.</div>`;
+  if(after.bonus===1) return `<div class="bonus">🔁 Weak start. Your first 2 spins totaled ⚡${after.firstTwo}. You earned <b>1 bonus spin</b>.</div>`;
+  return "";
+}
+function doneMsg(st){ return st.complete?`<div class="tdone">✅ Turn complete · total power ⚡${st.total}</div>`:""; }
 let current="weekly", rotation=0, spinning=false;
 const canvas=document.getElementById("wheel"), ctx=canvas.getContext("2d");
 const LOG_KEY="wom-log-v2";
@@ -612,6 +734,15 @@ function pick(){
 
 function spin(){
   if(spinning) return;
+  if((current==="weekly"||current==="playoff")&&turn&&turn.wheel===current){
+    const st=tstats(turn);
+    if(st.pending){
+      const res=document.getElementById("result"); res.className="result pop";
+      const k=st.pending.pos?"trait":"position";
+      res.innerHTML=`<div class="rbody">Finish your last spin first: <b>${st.pending.t}</b> still needs the ${WHEELS[k].name}.</div>${goBtn(k,"Spin the "+WHEELS[k].name)}`;
+      wireGo(res); return;
+    }
+  }
   spinning=true; document.getElementById("spinBtn").disabled=true;
   const sl=WHEELS[current].slices, T=total(current), idx=pick();
   let start=0; for(let i=0;i<idx;i++) start+=sl[i].w/T*Math.PI*2;
@@ -632,13 +763,50 @@ function spin(){
   requestAnimationFrame(step);
 }
 
+function wireGo(res){
+  res.querySelectorAll(".gonext").forEach(b=>b.onclick=()=>select(b.dataset.go));
+  const gp=res.querySelector(".gopacks"); if(gp) gp.onclick=()=>window.showView("packs");
+  const ud=res.querySelector(".undo"); if(ud) ud.onclick=()=>{ if(turn&&turn.e.length){ turn.e.pop(); saveTurn(); renderTurn(); res.className="result empty"; res.textContent="Spin removed. Tap SPIN"; } };
+}
 function show(x){
   const res=document.getElementById("result");
   res.className="result pop";
+  let pw="", flow="", msg="", logp="";
+  if(current==="weekly"||current==="playoff"){
+    const bo=baseOf(current,x.t);
+    if(!turn||turn.wheel!==current||tstats(turn).complete) turn={wheel:current,e:[]};
+    const before=tstats(turn);
+    const ent={t:x.t,b:bo?bo.b:5,need:bo?bo.need:null,pos:null,trait:null,power:null};
+    if(!ent.need) ent.power=powerOf(ent.b);
+    turn.e.push(ent); saveTurn();
+    const after=tstats(turn);
+    if(ent.need){ pw=meter(null,`base ${ent.b} × position${ent.need==="trait"?" × trait":""}`); flow=goBtn("position","Spin the Position Wheel to set the power"); }
+    else { pw=meter(ent.power,x.t==="Spin Twice"?"+2 spins added":""); logp=` ⚡${ent.power}`; msg=bonusMsg(before,after)+doneMsg(after); }
+    if(/Team Wheel/.test(x.b)) flow+=goBtn("team","Spin the Team Wheel");
+    flow+=`<button class="ibtn undo">↩ Undo this spin</button>`;
+  } else if(current==="position"||current==="trait"){
+    const st=turn&&tstats(turn), pend=st&&st.pending;
+    if(current==="position"&&pend&&!pend.pos){
+      const before=tstats(turn);
+      pend.pos=x.t;
+      if(pend.need==="trait"){ pw=`<div class="pinfo">Position weight <b>×${fmt(x.t==="Your Choice"?Math.max(...POS_LIST.map(p=>POS_W[p])):POS_W[x.t])}</b> for <b>${pend.t}</b></div>`; flow=goBtn("trait","Spin the Trait Wheel"); }
+      else { pend.power=powerOf(pend.b,pend.pos); pw=meter(pend.power,`${pend.t} · ${breakdown(pend)}`); logp=` ⚡${pend.power}`; msg=bonusMsg(before,tstats(turn))+doneMsg(tstats(turn)); flow=goBtn(turn.wheel,"Back to "+WHEELS[turn.wheel].name); }
+      saveTurn();
+    } else if(current==="trait"&&pend&&pend.need==="trait"&&pend.pos&&!pend.trait){
+      const before=tstats(turn);
+      pend.trait=x.t; pend.power=powerOf(pend.b,pend.pos,pend.trait); saveTurn();
+      pw=meter(pend.power,`${pend.pos==="Your Choice"?"your pick":pend.pos} · ${x.t} · ${breakdown(pend)}`); logp=` ⚡${pend.power}`;
+      msg=bonusMsg(before,tstats(turn))+doneMsg(tstats(turn)); flow=goBtn(turn.wheel,"Back to "+WHEELS[turn.wheel].name);
+    } else if(current==="position"){
+      pw=`<div class="pinfo">Position weight <b>×${fmt(x.t==="Your Choice"?Math.max(...POS_LIST.map(p=>POS_W[p])):POS_W[x.t])}</b></div>`;
+    } else {
+      pw=`<div class="pinfo">${traitInfo(x.t)}</div>`;
+    }
+  }
   res.innerHTML=`<div class="rtitle"><span>${x.e}</span><span>${x.t}</span>${tagHTML(x.k)}</div>
-    <div class="rbody">${x.b}</div>${x.n?`<div class="rnote">${x.n}</div>`:""}${/pack/i.test(x.t+" "+x.b+" "+(x.n||""))?`<button class="btn gopacks">📦 Go to packs</button>`:""}`;
-  const gp=res.querySelector(".gopacks"); if(gp) gp.onclick=()=>window.showView("packs");
-  log.unshift({w:WHEELS[current].name,e:x.e,t:x.t}); log=log.slice(0,60);
+    ${pw}<div class="rbody">${x.b}</div>${x.n?`<div class="rnote">${x.n}</div>`:""}${msg}${flow}${/pack/i.test(x.t+" "+x.b+" "+(x.n||""))?`<button class="btn gopacks">📦 Go to packs</button>`:""}`;
+  wireGo(res); renderTurn();
+  log.unshift({w:WHEELS[current].name,e:x.e,t:x.t+logp}); log=log.slice(0,60);
   try{ localStorage.setItem(LOG_KEY,JSON.stringify(log)); }catch(e){}
   renderLog();
 }
@@ -649,10 +817,24 @@ function renderLog(){
     : `<li style="color:var(--muted)">No spins yet.</li>`;
 }
 
+function traitInfo(t){
+  const r=POS_LIST.filter(p=>p!=="K").map(p=>[p,traitW(t,p)]).sort((a,b)=>b[1]-a[1]);
+  const hi=r[0][1], lo=r[r.length-1][1];
+  if(hi===lo) return `Trait weight <b>×${fmt(hi)}</b> at every position`;
+  const best=r.filter(x=>x[1]===hi).map(x=>x[0]).join(", "), worst=r.filter(x=>x[1]===lo).map(x=>x[0]).join(", ");
+  return `Trait weight: best at <b>${best} ×${fmt(hi)}</b>, worst at ${worst} ×${fmt(lo)}`;
+}
+function powerCell(x){
+  if(current==="weekly"||current==="playoff"){ const bo=baseOf(current,x.t); if(!bo) return ""; return `⚡${bo.b}${bo.need?(bo.need==="trait"?" × pos × trait":" × pos"):""}`; }
+  if(current==="position") return `×${fmt(x.t==="Your Choice"?Math.max(...POS_LIST.map(p=>POS_W[p])):POS_W[x.t])}`;
+  if(current==="trait"){ const r=POS_LIST.filter(p=>p!=="K").map(p=>traitW(x.t,p)); const hi=Math.max(...r), lo=Math.min(...r); return hi===lo?`×${fmt(hi)}`:`×${fmt(lo)}–${fmt(hi)}`; }
+  return "";
+}
 function renderOdds(){
   const sl=WHEELS[current].slices, T=total(current);
-  document.getElementById("odds").innerHTML=sl.map(x=>
-    `<tr><td><b>${x.t}</b>${tagHTML(x.k)}<div class="d">${x.b}${x.n?" "+x.n+".":""}</div></td><td class="p">${(x.w/T*100).toFixed(1)}%</td></tr>`).join("");
+  const pc=["weekly","playoff","position","trait"].includes(current);
+  document.getElementById("odds").innerHTML=(pc?`<tr><td></td><td class="p hd">Power</td><td class="p hd">Odds</td></tr>`:"")+sl.map(x=>
+    `<tr><td><b>${x.t}</b>${tagHTML(x.k)}<div class="d">${x.b}${x.n?" "+x.n+".":""}${current==="trait"?`<br>${traitInfo(x.t)}`:""}</div></td>${pc?`<td class="p pw">${powerCell(x)}</td>`:""}<td class="p">${(x.w/T*100).toFixed(1)}%</td></tr>`).join("");
 }
 
 function select(key){
@@ -662,7 +844,7 @@ function select(key){
   document.getElementById("desc").textContent=WHEELS[key].desc;
   document.getElementById("hub").textContent=WHEELS[key].icon;
   const res=document.getElementById("result"); res.className="result empty"; res.textContent="Tap SPIN";
-  renderOdds(); draw();
+  renderOdds(); draw(); renderTurn();
   if(window.curView!=="packs"&&location.hash!=="#"+key){ try{ history.replaceState(null,"","#"+key); }catch(e){} }
 }
 
