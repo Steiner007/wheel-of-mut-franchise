@@ -293,8 +293,14 @@
   .srow .sr{font-family:Oswald,sans-serif;color:var(--muted);width:14px}
   .srow .sn{flex:1;display:flex;flex-direction:column;line-height:1.2}
   .srow .sn small{color:var(--muted);font-size:12px}
-  .srow .sv{font-family:Oswald,sans-serif;font-size:15px;white-space:nowrap}
-  .srow .so{font-family:Oswald,sans-serif;font-weight:700;font-size:15px;min-width:24px;text-align:right;color:var(--chalk);background:#173826;border-radius:5px;padding:1px 5px}
+  .srow .sv,.srow .so{display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:Oswald,sans-serif;white-space:nowrap;border-radius:6px;padding:2px 7px;line-height:1.05}
+  .srow .sv{min-width:62px;background:rgba(255,200,61,.14);border:1px solid var(--gold)}
+  .srow .sv b{font-size:19px;color:var(--gold)}
+  .srow .so{min-width:38px;background:#173826}
+  .srow .so b{font-size:16px}
+  .srow .sv small,.srow .so small{font-family:Barlow,sans-serif;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+  .srow.shead{font-family:Oswald,sans-serif;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);padding:2px 0}
+  .srow.shead .sv,.srow.shead .so{background:none;border:none;padding:0 7px}
   .srow.none{color:var(--muted);font-size:14px}
   .snote{font-size:12.5px;color:var(--gold);margin-top:4px}
   .spick{display:flex;flex-wrap:wrap;gap:5px}
@@ -693,20 +699,20 @@ const TRAIT_DB="Ja'Marr Chase|Chase|WR|WR|Bengals|99|25|72|205|95|73|94|92|99|1|
 const TPL=TRAIT_DB.split(";").map(r=>{const [n,last,pos,g,team,o,a,ht,wt,spd,str,acc,agi,awr,j,yrs]=r.split("|");return {n,last,pos,g,team,o:+o,a:+a,ht:+ht,wt:+wt,spd:+spd,str:+str,acc:+acc,agi:+agi,awr:+awr,j:+j,yrs:+yrs};});
 const ftIn=h=>`${Math.floor(h/12)}'${h%12}"`;
 const TRAIT_SORT={
-  "Oldest":[p=>p.a,-1,p=>`age ${p.a}`],"Youngest":[p=>p.a,1,p=>`age ${p.a}`],
-  "Fastest":[p=>p.spd,-1,p=>`${p.spd} SPD`],"Strongest":[p=>p.str,-1,p=>`${p.str} STR`],
-  "Quickest":[p=>p.acc,-1,p=>`${p.acc} ACC`],"Most Agile":[p=>p.agi,-1,p=>`${p.agi} AGI`],"Smartest":[p=>p.awr,-1,p=>`${p.awr} AWR`],
-  "Tallest":[p=>p.ht,-1,p=>ftIn(p.ht)],"Shortest":[p=>p.ht,1,p=>ftIn(p.ht)],
-  "Heaviest":[p=>p.wt,-1,p=>`${p.wt} lb`],"Lightest":[p=>p.wt,1,p=>`${p.wt} lb`],
-  "Lowest Jersey #":[p=>p.j,1,p=>`#${p.j}`],"Highest Jersey #":[p=>p.j,-1,p=>`#${p.j}`],
-  "Best Overall":[p=>p.o,-1,p=>`${p.o} OVR`],"Most Years Pro":[p=>p.yrs,-1,p=>`${p.yrs} yrs pro`],
-  "Best Rookie":[p=>p.o,-1,p=>`rookie`,p=>p.yrs===0],
-  "First in ABC Order":[p=>p.last.toLowerCase(),1,p=>p.last],"Last in ABC Order":[p=>p.last.toLowerCase(),-1,p=>p.last]
+  "Oldest":[p=>p.a,-1,p=>p.a,"Age"],"Youngest":[p=>p.a,1,p=>p.a,"Age"],
+  "Fastest":[p=>p.spd,-1,p=>p.spd,"Speed"],"Strongest":[p=>p.str,-1,p=>p.str,"Strength"],
+  "Quickest":[p=>p.acc,-1,p=>p.acc,"Accel"],"Most Agile":[p=>p.agi,-1,p=>p.agi,"Agility"],"Smartest":[p=>p.awr,-1,p=>p.awr,"Awareness"],
+  "Tallest":[p=>p.ht,-1,p=>ftIn(p.ht),"Height"],"Shortest":[p=>p.ht,1,p=>ftIn(p.ht),"Height"],
+  "Heaviest":[p=>p.wt,-1,p=>p.wt+" lb","Weight"],"Lightest":[p=>p.wt,1,p=>p.wt+" lb","Weight"],
+  "Lowest Jersey #":[p=>p.j,1,p=>"#"+p.j,"Jersey"],"Highest Jersey #":[p=>p.j,-1,p=>"#"+p.j,"Jersey"],
+  "Best Overall":[p=>p.o,-1,p=>p.o,"Overall"],"Most Years Pro":[p=>p.yrs,-1,p=>p.yrs,"Yrs pro"],
+  "Best Rookie":[p=>p.o,-1,p=>p.yrs+" yrs","Yrs pro",p=>p.yrs===0],
+  "First in ABC Order":[p=>p.last.toLowerCase(),1,p=>p.last,"Last name"],"Last in ABC Order":[p=>p.last.toLowerCase(),-1,p=>p.last,"Last name"]
 };
 const TRAIT_CAP=88;
 function topTrait(trait,g,n){
   const t=TRAIT_SORT[trait]; if(!t) return {list:[],tie:false};
-  const [key,dir,,filt]=t;
+  const [key,dir,,,filt]=t;
   const pool=TPL.filter(p=>p.g===g&&p.o<=TRAIT_CAP&&(!filt||filt(p)));
   pool.sort((a,b)=>{const x=key(a),y=key(b); if(x<y) return -dir; if(x>y) return dir; return b.o-a.o;});
   const list=pool.slice(0,n||3);
@@ -722,9 +728,9 @@ function suggestHTML(trait,pos){
   return `<div class="sugg"><div class="sh">Top 3 <b>${pos}s</b> by <b>${trait}</b> · ${TRAIT_CAP} OVR or lower</div>${listHTML(trait,pos)}</div>`;
 }
 function listHTML(trait,pos){
-  const r=topTrait(trait,pos,3), show=TRAIT_SORT[trait][2];
+  const r=topTrait(trait,pos,3), show=TRAIT_SORT[trait][2], lbl=TRAIT_SORT[trait][3];
   if(!r.list.length) return `<div class="srow none">No ${pos}s qualify in the roster file.</div>`;
-  return r.list.map((p,i)=>`<div class="srow${i===0?" top":""}"><span class="sr">${i+1}</span><span class="sn"><b>${p.n}</b><small>${p.pos} · ${p.team} · age ${p.a}</small></span><span class="sv">${show(p)}</span><span class="so">${p.o}</span></div>`).join("")+(r.tie?`<div class="snote">Tie for #1: you pick.</div>`:"");
+  return `<div class="srow shead"><span class="sr"></span><span class="sn">Player</span><span class="sv">${lbl}</span><span class="so">OVR</span></div>`+r.list.map((p,i)=>`<div class="srow${i===0?" top":""}"><span class="sr">${i+1}</span><span class="sn"><b>${p.n}</b><small>${p.pos} · ${p.team} · age ${p.a}</small></span><span class="sv"><b>${show(p)}</b><small>${lbl}</small></span><span class="so"><b>${p.o}</b><small>OVR</small></span></div>`).join("")+(r.tie?`<div class="snote">Tie for #1: you pick.</div>`:"");
 }
 function wireSugg(root){
   root.querySelectorAll(".sp").forEach(b=>b.onclick=()=>{
