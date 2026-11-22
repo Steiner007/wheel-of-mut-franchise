@@ -264,6 +264,25 @@
   .tbar span{position:relative;display:block;padding:4px 8px;font-size:12px;color:var(--chalk)}
   .odds .hd{font-family:Oswald,sans-serif;font-size:11px;text-transform:uppercase;color:var(--muted)}
   .odds .pw{color:var(--chalk);font-size:13px;padding-left:6px}
+  .tres{margin-top:8px;padding:6px 10px;border-radius:7px;font-size:14px;border:1px solid var(--line);background:#0d2a1a}
+  .tres.r-lost{border-color:#4fb3e8;background:rgba(79,179,232,.12)}
+  .tres.r-streak{border-color:#ff7a3d;background:rgba(255,122,61,.14)}
+  .chip.gift{border-color:#ff7a3d;background:rgba(255,122,61,.1)}
+  .chip .kd{font-family:Oswald,sans-serif;font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--gold);border:1px solid var(--gold);border-radius:4px;padding:0 4px;margin-right:2px}
+  #bonusAsk{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.72);padding:16px}
+  .askbox{width:100%;max-width:400px;background:var(--dark);border:3px solid var(--chalk);border-radius:14px;padding:18px 16px 14px;text-align:center;animation:pop .3s ease-out}
+  .askq{font-family:Oswald,sans-serif;font-weight:700;font-size:40px;color:var(--gold);text-transform:uppercase;letter-spacing:2px;line-height:1}
+  .asks{color:var(--muted);margin:4px 0 14px;font-size:15px}
+  .askbtn{display:flex;align-items:center;gap:12px;width:100%;margin:0 0 10px;padding:12px 14px;border-radius:10px;cursor:pointer;text-align:left;color:var(--chalk);background:#0d2a1a;border:2px solid var(--line);font-family:Barlow,sans-serif}
+  .askbtn .ai{font-size:28px}
+  .askbtn .at{display:flex;flex-direction:column}
+  .askbtn b{font-family:Oswald,sans-serif;font-size:20px;text-transform:uppercase;letter-spacing:1px}
+  .askbtn small{font-size:14px;color:var(--muted)}
+  .askbtn.r-lost{border-color:#4fb3e8}
+  .askbtn.r-streak{border-color:#ff7a3d;background:rgba(255,122,61,.1)}
+  .askbtn.r-streak small{color:#ffb38a}
+  .askbtn:active{transform:scale(.98)}
+  .asknote{font-size:12.5px;color:var(--muted);margin:2px 0 10px}
 /* ---- combined shell ---- */
   header{text-align:left}
   .views{display:flex;gap:8px;padding:10px 12px;background:var(--dark);border-bottom:1px solid var(--line)}
@@ -320,6 +339,10 @@
       <p><b>Traits count too.</b> On a Trait Pick, the trait has to fit the position. Fastest at WR or CB is ×1.3; Heaviest at WR is ×0.7. Highest Paid ×1.3 and Smartest ×1.2 are good everywhere; jersey numbers and ABC order are ×0.6.</p>
       <p><b>Everyone always gets 2 spins.</b> Add up the power of those 2: <b>7 or less = 2 bonus spins</b>, <b>8–9 = 1 bonus spin</b>, 10+ = no bonus. Bonus spins don't earn more bonus spins. Example: Position Player at K (⚡2) + Position Player at WR (⚡7) = ⚡9, so you get a 3rd spin.</p>
       <p>The page tracks your turn and tells you when you've earned a bonus spin. Tap <b>New turn</b> when the next player goes.</p>
+      <h3>Loss bonus</h3>
+      <p>Each new Weekly turn starts by asking how your last game went:</p>
+      <p>✅ <b>I won / first game:</b> no bonus.<br>❌ <b>I lost:</b> +1 comeback spin.<br>🔥 <b>Losing streak</b> (lost your last 2+ games in a row): +2 comeback spins and a free Silver Pack (keep the best player).</p>
+      <p>Comeback spins are added on top of your 2 spins and any weak-spin bonus. They don't count toward the "first 2 spins" weak check. Playoff turns don't ask, since you only spin there after a win.</p>
       <h3>Win or lose</h3>
       <p><b>Win:</b> keep this week's players for the rest of the season. <b>Lose:</b> release them, unless you earned <b>Protection</b> from your challenge.</p>
             <h3>Challenge rewards</h3>
@@ -634,6 +657,12 @@ const TRAIT_W={
   "Lightest":{all:0.7,QB:0.6,OL:0.6,HB:0.8,WR:0.8,TE:0.8,K:1}
 };
 const POWER_NEED=10, MAX_BONUS=2;
+const RESULTS={
+  won:{icon:"✅",label:"I won / first game",cb:0,short:"Won last game",give:"No bonus"},
+  lost:{icon:"❌",label:"I lost",cb:1,short:"Lost last game",give:"+1 comeback spin"},
+  streak:{icon:"🔥",label:"Losing streak",cb:2,short:"Losing streak",give:"+2 comeback spins + a free Silver Pack"}
+};
+const STREAK_PACK_POWER=5;
 const traitW=(t,pos)=>{ const r=TRAIT_W[t]||{}; return r[pos]??r.all??1; };
 function posW(pos,trait){
   if(pos==="Your Choice") return Math.max(...POS_LIST.map(p=>POS_W[p]*(trait?traitW(trait,p):1)));
@@ -650,8 +679,9 @@ function tstats(t){
   const pending=t.e.find(x=>x.power==null)||null;
   let bonus=0, firstTwo=null;
   if(t.e.length>=2&&t.e[0].power!=null&&t.e[1].power!=null){ firstTwo=t.e[0].power+t.e[1].power; bonus=firstTwo<=7?2:firstTwo<=9?1:0; }
-  const allowed=2+bonus+2*t.e.filter(x=>x.t==="Spin Twice").length;
-  const total=t.e.reduce((a,x)=>a+(x.power||0),0);
+  const cb=t.cb||0;
+  const allowed=2+cb+bonus+2*t.e.filter(x=>x.t==="Spin Twice").length;
+  const total=t.e.reduce((a,x)=>a+(x.power||0),0)+(t.res==="streak"?STREAK_PACK_POWER:0);
   return {pending,bonus,firstTwo,allowed,total,complete:!pending&&t.e.length>=allowed};
 }
 const PLABEL=p=>p>=10?"MAX":p>=9?"Huge":p>=7?"Strong":p>=5?"Solid":p>=3?"Low":"Weak";
@@ -672,15 +702,42 @@ function renderTurn(){
   const show=turn&&["weekly","playoff","position","trait"].includes(current);
   el.style.display=show?"block":"none"; if(!show) return;
   const st=tstats(turn);
-  const chips=turn.e.map((x,i)=>`<div class="chip${x.power==null?" wait":""}"><span class="n">${i+1}${i>=2?" ★":""}</span><span class="ct">${x.t}${x.pos?` · ${x.pos==="Your Choice"?"Pick":x.pos}`:""}${x.trait?` · ${x.trait}`:""}</span><span class="cp" style="color:${x.power==null?"var(--muted)":PCOLOR(x.power)}">⚡${x.power??"?"}</span></div>`).join("");
+  const cb=turn.cb||0;
+  const kind=i=>i<2?"":i-2<cb?"Comeback":"Bonus";
+  const chips=(turn.res==="streak"?`<div class="chip gift"><span class="n">🎁</span><span class="ct">Streak breaker: 1 Silver Pack, keep the best player</span><span class="cp" style="color:${PCOLOR(STREAK_PACK_POWER)}">⚡${STREAK_PACK_POWER}</span></div>`:"")+turn.e.map((x,i)=>`<div class="chip${x.power==null?" wait":""}"><span class="n">${i+1}${i>=2?" ★":""}</span><span class="ct">${kind(i)?`<small class="kd">${kind(i)}</small> `:""}${x.t}${x.pos?` · ${x.pos==="Your Choice"?"Pick":x.pos}`:""}${x.trait?` · ${x.trait}`:""}</span><span class="cp" style="color:${x.power==null?"var(--muted)":PCOLOR(x.power)}">⚡${x.power??"?"}</span></div>`).join("");
   const left=Math.max(0,st.allowed-turn.e.length);
-  const extra=Array.from({length:left},(_,k)=>`<div class="chip empty"><span class="n">${turn.e.length+k+1}${turn.e.length+k>=2?" ★":""}</span><span class="ct">${turn.e.length+k>=2?"Bonus spin":"Spin"}</span><span class="cp">–</span></div>`).join("");
+  const extra=Array.from({length:left},(_,k)=>`<div class="chip empty"><span class="n">${turn.e.length+k+1}${turn.e.length+k>=2?" ★":""}</span><span class="ct">${turn.e.length+k>=2?kind(turn.e.length+k)+" spin":"Spin"}</span><span class="cp">–</span></div>`).join("");
   const sum2=st.firstTwo==null?turn.e.slice(0,2).reduce((a,x)=>a+(x.power||0),0):st.firstTwo;
   const status=st.complete?`✅ Turn done · total ⚡${st.total}`:st.pending?`Finish spin ${turn.e.indexOf(st.pending)+1}: spin the ${st.pending.pos?"Trait":"Position"} Wheel`:`Spin ${turn.e.length+1} of ${st.allowed}`;
+  const rr=RESULTS[turn.res||"won"];
   el.innerHTML=`<div class="thead"><span class="tl">${WHEELS[turn.wheel].icon} Turn</span><span class="ts">${status}</span><button class="ibtn" id="newTurn">New turn</button></div>
+    ${turn.wheel==="weekly"?`<div class="tres r-${turn.res||"won"}">${rr.icon} ${rr.short}: <b>${rr.give}</b></div>`:""}
     <div class="chips">${chips}${extra}</div>
     <div class="tbar"><i style="width:${Math.min(100,sum2*10)}%"></i><span>First 2 spins: ⚡${sum2} · 7 or less = 2 bonus spins · 8–9 = 1 bonus · 10+ = none</span></div>`;
-  document.getElementById("newTurn").onclick=()=>{ turn=null; saveTurn(); renderTurn(); const r=document.getElementById("result"); r.className="result empty"; r.textContent="New turn. Tap SPIN"; };
+  document.getElementById("newTurn").onclick=()=>{
+    turn=null; saveTurn(); renderTurn();
+    const r=document.getElementById("result"); r.className="result empty"; r.textContent="New turn. Tap SPIN";
+    if(current!=="playoff") askResult(null);
+  };
+}
+function askResult(then){
+  let ov=document.getElementById("bonusAsk");
+  if(!ov){ ov=document.createElement("div"); ov.id="bonusAsk"; document.body.appendChild(ov); }
+  ov.innerHTML=`<div class="askbox"><div class="askq">Bonus?</div><div class="asks">How did your last game go?</div>
+    ${Object.entries(RESULTS).map(([k,r])=>`<button class="askbtn r-${k}" data-r="${k}"><span class="ai">${r.icon}</span><span class="at"><b>${r.label}</b><small>${r.give}</small></span></button>`).join("")}
+    <div class="asknote">Losing streak = you lost your last 2+ games in a row.</div>
+    <button class="ibtn askcancel">Cancel</button></div>`;
+  ov.style.display="flex";
+  ov.querySelectorAll(".askbtn").forEach(b=>b.onclick=()=>{
+    const k=b.dataset.r; turn={wheel:"weekly",e:[],res:k,cb:RESULTS[k].cb}; saveTurn();
+    ov.style.display="none";
+    if(current!=="weekly") select("weekly"); else renderTurn();
+    const r=document.getElementById("result"); r.className="result pop";
+    r.innerHTML=`<div class="tres r-${k}">${RESULTS[k].icon} ${RESULTS[k].short}: <b>${RESULTS[k].give}</b></div>${k==="streak"?`<button class="btn gopacks">📦 Open the Silver Pack</button>`:""}<div class="rbody" style="margin-top:8px">Tap SPIN for your first spin.</div>`;
+    wireGo(r);
+    if(then) then();
+  });
+  ov.querySelector(".askcancel").onclick=()=>{ ov.style.display="none"; };
 }
 function goBtn(key,label){ return `<button class="btn gonext" data-go="${key}">➡ ${label}</button>`; }
 function bonusMsg(before,after){
@@ -734,6 +791,7 @@ function pick(){
 
 function spin(){
   if(spinning) return;
+  if(current==="weekly"&&(!turn||turn.wheel!=="weekly"||tstats(turn).complete)){ askResult(null); return; }
   if((current==="weekly"||current==="playoff")&&turn&&turn.wheel===current){
     const st=tstats(turn);
     if(st.pending){
